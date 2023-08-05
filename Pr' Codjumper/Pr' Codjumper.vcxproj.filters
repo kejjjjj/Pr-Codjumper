@@ -49,6 +49,18 @@
     <Filter Include="Source Files\sv">
       <UniqueIdentifier>{bf22f572-25ec-4f09-9683-2a7f3193ef7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\bg">
+      <UniqueIdentifier>{314a06e6-7060-4013-b71e-b82693447c4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tool">
+      <UniqueIdentifier>{9cba9cd2-aa58-427e-a202-bad841705e74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\geom">
+      <UniqueIdentifier>{8713e0fc-8411-440f-9ae1-a572194e73a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\misc_tools">
+      <UniqueIdentifier>{336bb657-f17f-481d-820a-b11e0671e551}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -165,6 +177,27 @@
     <ClInclude Include="sv_ccmds.hpp">
       <Filter>Source Files\sv</Filter>
     </ClInclude>
+    <ClInclude Include="r_gui.hpp">
+      <Filter>Source Files\render</Filter>
+    </ClInclude>
+    <ClInclude Include="commands.hpp">
+      <Filter>Source Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="cg_angles.hpp">
+      <Filter>Source Files\cg</Filter>
+    </ClInclude>
+    <ClInclude Include="bg_pmove.hpp">
+      <Filter>Source Files\bg</Filter>
+    </ClInclude>
+    <ClInclude Include="t_anglehelpers.hpp">
+      <Filter>Source Files\tool</Filter>
+    </ClInclude>
+    <ClInclude Include="geom_shapes.hpp">
+      <Filter>Source Files\geom</Filter>
+    </ClInclude>
+    <ClInclude Include="misc_tools.hpp">
+      <Filter>Source Files\misc_tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -262,6 +295,27 @@
     </ClCompile>
     <ClCompile Include="sv_ccmds.cpp">
       <Filter>Source Files\sv</Filter>
+    </ClCompile>
+    <ClCompile Include="r_gui.cpp">
+      <Filter>Source Files\render</Filter>
+    </ClCompile>
+    <ClCompile Include="commands.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="cg_angles.cpp">
+      <Filter>Source Files\cg</Filter>
+    </ClCompile>
+    <ClCompile Include="bg_pmove.cpp">
+      <Filter>Source Files\bg</Filter>
+    </ClCompile>
+    <ClCompile Include="t_anglehelpers.cpp">
+      <Filter>Source Files\tool</Filter>
+    </ClCompile>
+    <ClCompile Include="geom_shapes.cpp">
+      <Filter>Source Files\geom</Filter>
+    </ClCompile>
+    <ClCompile Include="misc_tools.cpp">
+      <Filter>Source Files\misc_tools</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

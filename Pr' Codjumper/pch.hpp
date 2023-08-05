@@ -11,6 +11,16 @@ constexpr auto GAME_NAME = "Call of Duty 4";
 constexpr auto MODULE_NAME = "iw3mp.exe";
 
 #define PI 3.14159265f
+
+#ifndef M_PI
+#define M_PI        3.14159265358979323846f // matches value in gcc v2 math.h
+#endif
+
+typedef float vec_t;
+typedef vec_t vec2_t[2];
+typedef vec_t vec3_t[3];
+typedef vec_t vec4_t[4];
+
 #define DotProduct(x,y)			((x)[0]*(y)[0]+(x)[1]*(y)[1]+(x)[2]*(y)[2])
 #define VectorSubtract(a,b,c)	((c)[0]=(a)[0]-(b)[0],(c)[1]=(a)[1]-(b)[1],(c)[2]=(a)[2]-(b)[2])
 #define VectorAdd(a,b,c)		((c)[0]=(a)[0]+(b)[0],(c)[1]=(a)[1]+(b)[1],(c)[2]=(a)[2]+(b)[2])
@@ -29,6 +39,9 @@ constexpr auto MODULE_NAME = "iw3mp.exe";
 #define RAD2SHORT(a) ((a) * (32768.f / (float)M_PI))
 #define SHORT2RAD(a) ((a) * ((float)M_PI / 32768.f))
 #define SHORT2DEG(a) (((a) / 32768.f) * 180.0f)
+
+#define NOT_SERVER *(int*)0x0797520 == 0
+
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
@@ -50,8 +63,13 @@ constexpr auto MODULE_NAME = "iw3mp.exe";
 #include <fstream>
 #include <direct.h>
 
-#include <d3d9.h>
 #pragma comment(lib, "d3d9.lib")
+#pragma comment(lib, "d3dx9.lib")
+
+//DIRECTX
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <d3dx9core.h>
 
 //IMGUI
 #include "imGui/imgui.h"
@@ -73,6 +91,7 @@ constexpr auto MODULE_NAME = "iw3mp.exe";
 #include "koukku.hpp"
 #include "errors.hpp"
 #include "dvar.hpp"
+#include "commands.hpp"
 
 #include "cg_local.hpp"
 #include "cg_offsets.hpp"
@@ -81,9 +100,13 @@ constexpr auto MODULE_NAME = "iw3mp.exe";
 
 #include "cg_init.hpp"
 #include "cg_hooks.hpp"
+#include "cg_angles.hpp"
+
+#include "bg_pmove.hpp"
 
 #include "r_renderer.hpp"
 #include "r_drawtools.hpp"
+#include "r_gui.hpp"
 
 #include "sv_ccmds.hpp"
 
@@ -91,8 +114,13 @@ constexpr auto MODULE_NAME = "iw3mp.exe";
 #include "scr_utilities.hpp"
 #include "scr_functions.hpp"
 
+#include "t_anglehelpers.hpp"
 
 #include "com_channel.hpp"
+
+#include "geom_shapes.hpp"
+#include "misc_tools.hpp"
+
 
 using namespace std::chrono_literals;
 

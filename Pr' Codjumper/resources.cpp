@@ -7,8 +7,7 @@ void Resources::initialize()
 	create_subdirectory("resources\\fonts");
 	create_subdirectory("resources\\images");
 
-	load_font("conduit", "conduit_itc_light1.ttf", 24.f);
-
+	//recreate_materials();
 }
 
 void Resources::create_subdirectory(const std::string& name) const noexcept
@@ -21,6 +20,13 @@ void Resources::create_subdirectory(const std::string& name) const noexcept
 			return;
 		}
 	}
+}
+void Resources::recreate_materials()
+{
+	load_font("conduit", "conduit_itc_light1.ttf", 24.f);
+
+	load_image("visuals", "visuals.png");
+
 }
 void Resources::load_font(const char* name, const std::string& file_name, const float scale)
 {
@@ -60,4 +66,28 @@ std::optional<ImFont*> Resources::FindFont(const std::string& name)
 	}
 
 	return std::nullopt;
+}
+std::optional<LPDIRECT3DTEXTURE9> Resources::FindTexture(const std::string& name)
+{
+	for (const auto& i : images) {
+		if (!name.compare(i.second))
+			return i.first;
+	}
+
+	return std::nullopt;
+}
+void Resources::load_image(const char* name, const std::string& file_name)
+{
+	const std::string full_path = fs::root_path() + "\\resources\\images";
+	const std::string c_str = std::string(full_path + "\\" + file_name);
+
+	images.push_back(std::make_pair(file2texture(c_str), name));
+
+}
+void Resources::free_images()
+{
+	for (auto& i : images) {
+		i.first->Release();
+		i.first = 0;
+	}
 }

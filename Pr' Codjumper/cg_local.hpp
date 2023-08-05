@@ -139,10 +139,6 @@
 #define PC
 #endif
 
-typedef float vec_t;
-typedef vec_t vec2_t[2];
-typedef vec_t vec3_t[3];
-typedef vec_t vec4_t[4];
 
 typedef unsigned __int16 ScriptString;
 
@@ -1479,7 +1475,8 @@ struct pmove_t
 	float viewChange;
 	char handler;
 };
-
+inline pmove_t pm_glob;
+inline pml_t pml_glob;
 enum MapType
 {
 	MAPTYPE_NONE = 0x0,

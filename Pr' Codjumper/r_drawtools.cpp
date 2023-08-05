@@ -286,3 +286,53 @@ void R_DrawText(const char* text, float x, float y, float xScale, float yScale, 
 {
 	R_DrawText(text, "fonts/smalldevfont", x, y, xScale, yScale, rotation, color, style);
 }
+
+std::optional<ivec2> WorldToScreen(const fvec3& location)
+{
+	const refdef_s* refdef = &cgs->refdef;
+
+	const int centerX = refdef->width / 2;
+	const int centerY = refdef->height / 2;
+
+	const fvec3 vright = refdef->viewaxis[1];
+	const fvec3 vup = refdef->viewaxis[2];
+	const fvec3 vfwd = refdef->viewaxis[0];
+
+	const fvec3 vLocal = location - refdef->vieworg;
+	fvec3 vTransform;
+
+	vTransform.x = vLocal.dot(vright);
+	vTransform.y = vLocal.dot(vup);
+	vTransform.z = vLocal.dot(vfwd);
+
+	if (vTransform.z < 0.01) {
+		return std::nullopt;
+	}
+	ivec2 out;
+
+	out.x = centerX * (1 - (vTransform.x / refdef->tanHalfFovX / vTransform.z));
+	out.y = centerY * (1 - (vTransform.y / refdef->tanHalfFovY / vTransform.z));
+
+
+	if (vTransform.z > 0)
+		return out;
+
+	return std::nullopt;
+}
+
+void R_DrawTriangle(vec3_t pointA, vec3_t pointB, vec3_t pointC, vec4_t col)
+{
+	std::optional<ivec2> a, b, c;
+	
+	a = WorldToScreen(pointA);
+	b = WorldToScreen(pointB);
+	c = WorldToScreen(pointC);
+
+
+	if ((a && b && c) == false) {
+		return;
+	}
+
+	ImGui::GetBackgroundDrawList()->AddTriangleFilled(a.value(), b.value(), c.value(), IM_COL32(col[0], col[1], col[2], col[3]));
+
+}

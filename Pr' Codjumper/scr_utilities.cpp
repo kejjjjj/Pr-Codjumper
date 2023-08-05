@@ -35,7 +35,7 @@ char* Scr_GetString(uint32_t parameter)
 	}
 
 	if (numstr)
-		str = (char*)((((int)0x14E8A04) + (12 * numstr + 4)) + 0x2187C);
+		str = reinterpret_cast<char*>((0x14E8A04 + (12 * numstr + 4)) + 0x2187C);
 	else str = 0;
 
 	return str;
@@ -68,15 +68,15 @@ float __cdecl Scr_GetVector(uint32_t param, float* vector)
 }
 int Scr_GetNumParam()
 {
-	return *(int*)0x1794074;
+	return *reinterpret_cast<int*>(0x1794074);
 }
 int Scr_AddInt(int val)
 {
-	return ((int(__cdecl*)(int32_t _prm))0x523AB0)(val);
+	return engine_call<int>(false, 0x523AB0, val);
 }
 int Scr_AddFloat(float val)
 {
-	return ((int(__cdecl*)(float _prm))0x523AB0)(val);
+	return engine_call<int>(false, 0x523AF0, val);
 }
 float* Scr_AddVector(float* vector)
 {

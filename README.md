@@ -1,0 +1,1 @@
+<a href="https://www.flaticon.com/free-icons/machine-vision" title="machine vision icons">Machine vision icons created by Freepik - Flaticon</a>

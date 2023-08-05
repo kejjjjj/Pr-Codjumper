@@ -4,6 +4,9 @@
 
 typedef long(__stdcall* endScene)(IDirect3DDevice9*);
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+
 class Renderer
 {
 public:
@@ -21,12 +24,17 @@ public:
 
 	static void CL_ShutdownRenderer();
 	static void R_RecoverLostDevice();
+
+	static LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 private:
 
 
 	std::optional<endScene> get_endscene();
 
 	void initialize_imgui();
+	
+	void create_theme(const float transparency);
 
 	bool begin_frame();
 	void end_frame();

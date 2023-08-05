@@ -19,10 +19,14 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
                 FILE* _con = 0;
 
-                AllocConsole();
-                freopen_s(&_con, "CONOUT$", "w", stdout);
+                //AllocConsole();
+                //freopen_s(&_con, "CONOUT$", "w", stdout);
 
-                puts("hello, world!");
+                //puts("hello, world!");
+
+                while (!cgs || !cg::dx->device) {
+                    std::this_thread::sleep_for(100ms);
+                }
 
                 CG_Init();
 

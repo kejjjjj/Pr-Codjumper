@@ -29,3 +29,7 @@ ScreenPlacement* ScrPlace_ApplyRect(float* x, float* w, float* y, float* h, Scre
 void CG_DrawRotatedPicPhysical(ScreenPlacement* scrPlace, float x, float y, float w, float h, float angle, float* color, Material* material);
 
 ScreenPlacement* CG_GetScreenPlacement(int LocalClientNum);
+
+std::optional<ivec2> WorldToScreen(const fvec3& location);
+
+void R_DrawTriangle(vec3_t pointA, vec3_t pointB, vec3_t pointC, vec4_t col);

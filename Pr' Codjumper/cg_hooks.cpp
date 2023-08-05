@@ -8,6 +8,8 @@ void CG_CreatePermaHooks()
 
 	hooktable.insert(hookEnums_e::HOOK_SHUTDOWN_RENDERER, hook::hookobj<void*>(0x46CA40, renderer.CL_ShutdownRenderer, TRUE));
 	hooktable.insert(hookEnums_e::HOOK_RECOVER_LOST_DEVICE, hook::hookobj<void*>(0x5F5360, renderer.R_RecoverLostDevice, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_WNDPROC, hook::hookobj<void*>(is_cod4x() ? is_cod4x() + 0x801D6 : 0x57BB20, renderer.WndProc, TRUE));
+
 
 	hooktable.insert(hookEnums_e::HOOK_SV_MAP, hook::hookobj<void*>(0x55D3D0, SV_Map, TRUE));
 	hooktable.insert(hookEnums_e::HOOK_CL_DISCONNECT, hook::hookobj<void*>(0x4696B0, CL_Disconnect, TRUE));
@@ -24,6 +26,10 @@ void CG_CreateHooks()
 	hooktable.insert(hookEnums_e::HOOK_DRAWACTIVE,			hook::hookobj<void*>(is_cod4x() ? is_cod4x() + 0x5464 : 0x42F7F0, renderer.CG_DrawActive, TRUE));
 	
 	GScript::getInstance().create_hooks(hooktable);
+
+	hooktable.insert(hookEnums_e::HOOK_PM_WALKMOVE, hook::hookobj<void*>(0x40F7A0, PM_WalkMove, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_PM_AIRMOVE, hook::hookobj<void*>(0x40F680, PM_AirMove, TRUE));
+
 
 }
 void CG_ReleaseHooks()

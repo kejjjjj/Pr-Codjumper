@@ -7,6 +7,7 @@ enum class hookEnums_e : short
 	//PERMA HOOKS
 	HOOK_SHUTDOWN_RENDERER,
 	HOOK_RECOVER_LOST_DEVICE,
+	HOOK_WNDPROC,
 
 	HOOK_SV_MAP,
 	HOOK_CL_DISCONNECT,
@@ -19,6 +20,8 @@ enum class hookEnums_e : short
 	HOOK_GSCR_GETFUNCTION,
 	HOOK_GSCR_GETMETHOD,
 
+	HOOK_PM_WALKMOVE,
+	HOOK_PM_AIRMOVE
 };
 
 class HookTable

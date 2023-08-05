@@ -100,6 +100,7 @@
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <BuildStlModules>false</BuildStlModules>
+      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;%(AdditionalLibraryDirectories);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -109,6 +110,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>D:\Activision\cod4\miles\$(TargetName).asi</OutputFile>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -146,16 +148,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bg_pmove.hpp" />
+    <ClInclude Include="cg_angles.hpp" />
     <ClInclude Include="cg_hooks.hpp" />
     <ClInclude Include="cg_init.hpp" />
     <ClInclude Include="cg_local.hpp" />
     <ClInclude Include="cg_offsets.hpp" />
+    <ClInclude Include="commands.hpp" />
     <ClInclude Include="com_channel.hpp" />
     <ClInclude Include="dvar.hpp" />
     <ClInclude Include="entrypoint.hpp" />
     <ClInclude Include="errors.hpp" />
     <ClInclude Include="e_utilities.hpp" />
     <ClInclude Include="fs_utilities.hpp" />
+    <ClInclude Include="geom_shapes.hpp" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
     <ClInclude Include="ImGui\imgui_impl_dx9.h" />
@@ -174,9 +180,11 @@
     <ClInclude Include="mh\hde\table64.h" />
     <ClInclude Include="mh\MinHook.h" />
     <ClInclude Include="mh\trampoline.h" />
+    <ClInclude Include="misc_tools.hpp" />
     <ClInclude Include="pch.hpp" />
     <ClInclude Include="resources.hpp" />
     <ClInclude Include="r_drawtools.hpp" />
+    <ClInclude Include="r_gui.hpp" />
     <ClInclude Include="r_renderer.hpp" />
     <ClInclude Include="scr_functions.hpp" />
     <ClInclude Include="scr_main.hpp" />
@@ -184,16 +192,21 @@
     <ClInclude Include="sv_ccmds.hpp" />
     <ClInclude Include="sys_tools.hpp" />
     <ClInclude Include="typedefs.hpp" />
+    <ClInclude Include="t_anglehelpers.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bg_pmove.cpp" />
+    <ClCompile Include="cg_angles.cpp" />
     <ClCompile Include="cg_hooks.cpp" />
     <ClCompile Include="cg_init.cpp" />
+    <ClCompile Include="commands.cpp" />
     <ClCompile Include="com_channel.cpp" />
     <ClCompile Include="dvar.cpp" />
     <ClCompile Include="entrypoint.cpp" />
     <ClCompile Include="errors.cpp" />
     <ClCompile Include="e_utilities.cpp" />
     <ClCompile Include="fs_utilities.cpp" />
+    <ClCompile Include="geom_shapes.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -247,6 +260,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="misc_tools.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -256,12 +270,14 @@
     <ClCompile Include="resources.cpp" />
     <ClCompile Include="r_drawtools.cpp" />
     <ClCompile Include="r_endscene.cpp" />
+    <ClCompile Include="r_gui.cpp" />
     <ClCompile Include="r_renderer.cpp" />
     <ClCompile Include="scr_functions.cpp" />
     <ClCompile Include="scr_main.cpp" />
     <ClCompile Include="scr_utilities.cpp" />
     <ClCompile Include="sv_ccmds.cpp" />
     <ClCompile Include="sys_tools.cpp" />
+    <ClCompile Include="t_anglehelpers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
