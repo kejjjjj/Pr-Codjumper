@@ -1,5 +1,33 @@
 #include "pch.hpp"
 
+void Gui::initialize()
+{
+	decltype(auto) resources = Resources::getInstance();
+
+	Gui_MainCategory category(resources.FindTexture("visuals").value(), "Visuals");
+	Gui_SubCategory subcategory("hello");
+	Gui_SubCategory subcategory2("for sure");
+	Gui_SubCategory subcategory3("possibly");
+	Gui_SubCategory subcategory4("pagman");
+
+	append_category(category);
+
+	auto& mainCategory = categories.back();
+
+	mainCategory.append_subcategory(subcategory); //first, so it will be active
+	mainCategory.append_subcategory(subcategory2);
+	mainCategory.append_subcategory(subcategory3);
+	mainCategory.append_subcategory(subcategory4);
+
+	auto subCategory = mainCategory.get_active();
+
+	Gui_CategoryItems items("Anglehelper");
+
+	subCategory->append_itemlist(items);
+
+	set_active(categories.front());
+	
+}
 void Gui::menu_toggle()
 {
 	decltype(auto) gui = getInstance();
@@ -34,17 +62,12 @@ void Gui::render()
 	if (!is_open)
 		return;
 
-	ImGui::Begin("Codjumper tools [https://github.com/kejjjjj/Pr-Codjumper]", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar/*ImGuiWindowFlags_AlwaysAutoResize*/);
-
-/*	ImGui::Text("HELLLLLLLLOOOOOOOOOOOOOOOOOO");
-
-	static bool whooooo = false;
-	ImGui::Checkbox2("BITCH", &whooooo)*/;
-	auto& style = ImGui::GetStyle();
+	ImGui::Begin("cj", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar/*ImGuiWindowFlags_AlwaysAutoResize*/);
 
 
 	render_topbar();
 	left_categories();
+	right_categories();
 	bottom_categories();
 
 	ImGui::End();
@@ -56,30 +79,44 @@ void Gui::render_topbar()
 {
 	
 	ImGui::Text("free space: (%ipx, %ipx)", free_space.x, free_space.y);
-	ImGui::Dummy(ivec2(0, 50));
-	ImGui::Separator();
+	ImGui::Dummy(ivec2(0, 60));
+
+	const auto& color = ImGui::GetStyle().Colors[ImGuiCol_Separator];
+	const auto c = ImColor(color.x, color.y, color.z, color.w);
+
+	ImGui::GetWindowDrawList()->AddRectFilled(
+		ivec2(pos.x, pos.y + ImGui::GetCursorPosY()-6),
+		ivec2(pos.x + size.x, pos.y + ImGui::GetCursorPosY()-3),
+		c);
+
+	//ImGui::Separator();
 
 	update_dimensions();
 	clip_bounds();
 }
 void Gui::left_categories()
 {
+	ImGui::BeginGroup();
 	auto& style  = ImGui::GetStyle();
-	ImVec2 mins = ImVec2(pos.x + cursor.x - style.WindowPadding.x * 4, pos.y + cursor.y - style.WindowPadding.y / 2 + 1);
-	ImVec2 maxs = ImVec2(pos.x + cursor.x + 150, pos.y + cursor.y + free_space.y - 100);
-
-
-
-	ImGui::BeginChild("##11asd", ImVec2(maxs.x - mins.x, maxs.y - mins.y), true);
+	ivec2 mins = ivec2(pos.x+4, pos.y + cursor.y - style.WindowPadding.y / 2 + 1);
+	ivec2 maxs = ivec2(pos.x + cursor.x + 150, pos.y + cursor.y + free_space.y - 100);
+	maxs.x += style.FramePadding.x * style.WindowPadding.x;
 
 	ImGui::GetWindowDrawList()->AddRectFilled(
 		mins,
-		ImVec2(maxs.x + style.FramePadding.x * style.WindowPadding.x, maxs.y), 
+		maxs,
 		IM_COL32(33, 33, 33, 255));
+
+	left_mins = mins;
+	left_maxs = maxs;
+
+	ImGui::Dummy(ivec2(8, 0));
+	ImGui::SameLine();
+	ImGui::BeginChild("##11asd", ImVec2(maxs.x - mins.x - 20, maxs.y - mins.y), false, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
 
 	ImGui::BeginGroup();
 
-	ImGui::Text("Angles");
+	active_category->render_subcategories(mins , maxs);
 
 	ImGui::EndGroup();
 
@@ -94,10 +131,96 @@ void Gui::left_categories()
 
 	update_dimensions();
 	clip_bounds();
+
+	ImGui::EndGroup();
+
 }
 void Gui::bottom_categories()
 {
-	ImGui::Separator();
+	const auto& color = ImGui::GetStyle().Colors[ImGuiCol_Separator];
+	const auto c = ImColor(color.x, color.y, color.z, color.w);
+	ImGui::GetWindowDrawList()->AddRectFilled(
+		ivec2(pos.x, pos.y + ImGui::GetCursorPosY() - 6),
+		ivec2(pos.x + size.x, pos.y + ImGui::GetCursorPosY() - 3),
+		c);
+
+	static const size_t numCategories = categories.size();
+	decltype(auto) resources = Resources::getInstance();
+
+	if (numCategories > 0) {
+		
+		const auto old_font = ImGui::GetFont();
+
+		if (auto font = resources.FindFont("conduit_m"))
+			ImGui::SetCurrentFont(font.value());
+
+		const int padding = mainSize.x / 1.5f;
+		ivec2 _pos = main_category_first_image_position(numCategories, padding);
+
+		//ImGui::Dummy(ivec2(0, _pos.y - padding));
+		//ImGui::Dummy(ivec2(_pos.x - padding/2, 0.f));
+		//ImGui::SameLine();
+		for(auto it = categories.begin(); it != categories.end(); it++){
+
+			const auto i = std::distance(categories.begin(), it);
+
+			size_t x_offset = ((mainSize.x) + padding) * i;
+			ivec2 mins = ivec2(pos.x + _pos.x + x_offset, pos.y + _pos.y);
+			ivec2 maxs = ivec2(pos.x + _pos.x + x_offset + mainSize.x, pos.y + _pos.y + mainSize.y);
+
+			it->render(mins, maxs, &active_category);
+			//ImGui::SameLine();
+			//ImGui::Dummy(ivec2(5, 0));
+			//ImGui::SameLine();
+
+			//ImGui::GetWindowDrawList()->AddRect(
+			//	ivec2(pos.x + _pos.x + x_offset, pos.y + _pos.y), 
+			//	ivec2(pos.x + _pos.x + x_offset + mainSize.x, pos.y + _pos.y + mainSize.y), IM_COL32(255, 255, 255, 255));
+
+			//const std::string str = std::to_string(i);
+			//const ivec2 tsize = ImGui::CalcTextSize(str.c_str());
+
+			//ImGui::GetWindowDrawList()->AddText(ivec2(pos.x + _pos.x + x_offset + 32 - tsize.x/2, pos.y + _pos.y + 32 - tsize.y/2), IM_COL32(255, 255, 255, 255), str.c_str());
+		}
+
+		ImGui::SetCurrentFont(old_font);
+
+	}
+
+}
+void Gui::right_categories()
+{
+	auto& style = ImGui::GetStyle();
+	ivec2 mins = ivec2(left_maxs.x, left_mins.y);
+	ivec2 maxs = ivec2(pos.x + size.x, left_maxs.y);
+	//maxs.x += style.FramePadding.x * style.WindowPadding.x;
+
+	ImGui::GetWindowDrawList()->AddRectFilled(
+		mins,
+		maxs,
+		IM_COL32(28,28,28,255));
+
+	ImGui::SameLine();
+
+	ImGui::BeginChild("right_cat", ivec2(pos.x + size.x - 18, left_maxs.y - 5) - mins, true);
+
+	for (auto& i : active_category->get_active()->get_items()) {
+
+		const_cast<Gui_CategoryItems&>(i).render();
+	}
+
+	ImGui::EndChild();
+
+
+}
+ivec2 Gui::main_category_first_image_position(const size_t numimages, float spacing) const noexcept
+{
+
+	const float totalwidth = (numimages * mainSize.x) + ((numimages - 1) * (numimages < 2 ? 1 : spacing));
+	const float start_x = (size.x - totalwidth) / 2;
+	const float start_y = (cursor.y + (free_space.y - mainSize.y) * 0.5f) - ImGui::GetFontSize()/2 - 4;
+
+	return { int(start_x), int(start_y) };
 
 }
 void Gui::update_dimensions()

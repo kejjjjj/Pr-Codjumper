@@ -11,6 +11,7 @@ void CG_Init()
     decltype(auto) renderer = Renderer::getInstance();
     decltype(auto) gscript = GScript::getInstance();
     decltype(auto) resources = Resources::getInstance();
+    decltype(auto) gui = Gui::getInstance();
 
     if (!renderer.initialize())
         return;
@@ -25,6 +26,7 @@ void CG_Init()
 
     gscript.initialize();
     resources.initialize();
+    gui.initialize();
 
     CG_CreatePermaHooks();
 

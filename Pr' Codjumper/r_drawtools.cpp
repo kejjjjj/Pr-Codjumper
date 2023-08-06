@@ -191,8 +191,9 @@ ScreenPlacement* ScrPlace_ApplyRect(float* x, float* w, float* y, float* h, Scre
 		return result;
 	}
 }
-void CG_DrawRotatedPicPhysical(ScreenPlacement* scrPlace, float x, float y, float w, float h, float angle, float* color, Material* material)
+void CG_DrawRotatedPicPhysical(ScreenPlacement* screenPlace, float x, float y, float w, float h, float angle, float* color, Material* material)
 {
+
 	double v8; // st7
 	double v9; // st4
 	double v10; // st3
@@ -227,13 +228,13 @@ void CG_DrawRotatedPicPhysical(ScreenPlacement* scrPlace, float x, float y, floa
 	angle = cos(v17);
 	v16 = sin(v17);
 	wa = w * 0.5;
-	v17 = wa * scrPlace->scaleRealToVirtual[0];
+	v17 = wa * screenPlace->scaleRealToVirtual[0];
 	wb = 0.5 * h;
-	ha = wb * scrPlace->scaleRealToVirtual[1];
-	wc = x * scrPlace->scaleRealToVirtual[0];
+	ha = wb * screenPlace->scaleRealToVirtual[1];
+	wc = x * screenPlace->scaleRealToVirtual[0];
 	v8 = v17;
 	v17 = wc + v17;
-	wd = scrPlace->scaleRealToVirtual[1] * y;
+	wd = screenPlace->scaleRealToVirtual[1] * y;
 	v18 = wd + ha;
 	v19 = v8 * angle;
 	v20 = v8 * v16;
@@ -242,25 +243,25 @@ void CG_DrawRotatedPicPhysical(ScreenPlacement* scrPlace, float x, float y, floa
 	v9 = v17 - v19 * 1.0;
 	v10 = v21 * -1.0;
 	we = v9 - v10;
-	verts[0] = we * scrPlace->scaleVirtualToReal[0];
+	verts[0] = we * screenPlace->scaleVirtualToReal[0];
 	v11 = v18 - 1.0 * v20;
 	v12 = -1.0 * v22;
 	wf = v12 + v11;
-	verts[1] = wf * scrPlace->scaleVirtualToReal[1];
+	verts[1] = wf * screenPlace->scaleVirtualToReal[1];
 	v13 = v17 + v19;
 	wg = v13 - v10;
-	verts[2] = wg * scrPlace->scaleVirtualToReal[0];
+	verts[2] = wg * screenPlace->scaleVirtualToReal[0];
 	v14 = v20 + v18;
 	wh = v12 + v14;
-	verts[3] = wh * scrPlace->scaleVirtualToReal[1];
+	verts[3] = wh * screenPlace->scaleVirtualToReal[1];
 	wi = v13 - v21;
-	verts[4] = wi * scrPlace->scaleVirtualToReal[0];
+	verts[4] = wi * screenPlace->scaleVirtualToReal[0];
 	wj = v14 + v22;
-	verts[5] = wj * scrPlace->scaleVirtualToReal[1];
+	verts[5] = wj * screenPlace->scaleVirtualToReal[1];
 	wk = v9 - v21;
-	verts[6] = wk * scrPlace->scaleVirtualToReal[0];
+	verts[6] = wk * screenPlace->scaleVirtualToReal[0];
 	wl = v22 + v11;
-	verts[7] = wl * scrPlace->scaleVirtualToReal[1];
+	verts[7] = wl * screenPlace->scaleVirtualToReal[1];
 
 	__asm
 	{

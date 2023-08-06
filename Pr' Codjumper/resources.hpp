@@ -12,8 +12,8 @@ public:
 
 	void initialize();
 
-	std::optional<ImFont*> FindFont(const std::string& name);
-	std::optional<LPDIRECT3DTEXTURE9> FindTexture(const std::string& name);
+	std::optional<ImFont*> FindFont(const std::string& name) const noexcept;
+	std::optional<LPDIRECT3DTEXTURE9> FindTexture(const std::string& name) const noexcept;
 
 
 	void recreate_materials();

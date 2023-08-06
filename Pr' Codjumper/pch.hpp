@@ -45,6 +45,8 @@ typedef vec_t vec4_t[4];
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
+#pragma warning(disable : 26495)
+
 #include <Windows.h>
 #include <string>
 #include <sstream>
@@ -62,6 +64,8 @@ typedef vec_t vec4_t[4];
 #include <filesystem>
 #include <fstream>
 #include <direct.h>
+#include <type_traits>
+#include <stdexcept>
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
@@ -86,10 +90,12 @@ typedef vec_t vec4_t[4];
 #include "entrypoint.hpp"
 #include "resources.hpp"
 
+#include "errors.hpp"
+#include "evar.hpp"
+
 #include "fs_utilities.hpp"
 #include "typedefs.hpp"
 #include "koukku.hpp"
-#include "errors.hpp"
 #include "dvar.hpp"
 #include "commands.hpp"
 
@@ -106,6 +112,9 @@ typedef vec_t vec4_t[4];
 
 #include "r_renderer.hpp"
 #include "r_drawtools.hpp"
+#include "r_gui_c_items.hpp"
+#include "r_gui_sub_c.hpp"
+#include "r_gui_main.hpp"
 #include "r_gui.hpp"
 
 #include "sv_ccmds.hpp"
@@ -120,6 +129,8 @@ typedef vec_t vec4_t[4];
 
 #include "geom_shapes.hpp"
 #include "misc_tools.hpp"
+
+#include "ImGui/imgui_color_gradient.hpp"
 
 
 using namespace std::chrono_literals;

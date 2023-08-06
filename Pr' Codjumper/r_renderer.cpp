@@ -54,6 +54,9 @@ void Renderer::initialize_imgui()
 	ImGui_ImplWin32_Init(h_hWnd);
 	ImGui_ImplDX9_Init(pDevice);
 
+	io.WantCaptureMouse = true;
+	io.WantCaptureKeyboard = true;
+
 	create_theme(1.f);
 }
 

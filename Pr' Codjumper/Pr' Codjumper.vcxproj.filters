@@ -61,6 +61,12 @@
     <Filter Include="Source Files\misc_tools">
       <UniqueIdentifier>{336bb657-f17f-481d-820a-b11e0671e551}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\render\gui">
+      <UniqueIdentifier>{e2209027-d7b2-4c89-99f6-b884d3bb880a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\evar">
+      <UniqueIdentifier>{461626ee-758a-477a-8c23-7917665ef519}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -177,9 +183,6 @@
     <ClInclude Include="sv_ccmds.hpp">
       <Filter>Source Files\sv</Filter>
     </ClInclude>
-    <ClInclude Include="r_gui.hpp">
-      <Filter>Source Files\render</Filter>
-    </ClInclude>
     <ClInclude Include="commands.hpp">
       <Filter>Source Files\engine</Filter>
     </ClInclude>
@@ -197,6 +200,24 @@
     </ClInclude>
     <ClInclude Include="misc_tools.hpp">
       <Filter>Source Files\misc_tools</Filter>
+    </ClInclude>
+    <ClInclude Include="r_gui.hpp">
+      <Filter>Source Files\render\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="r_gui_main.hpp">
+      <Filter>Source Files\render\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_color_gradient.hpp">
+      <Filter>Header Files\lib\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="r_gui_sub_c.hpp">
+      <Filter>Source Files\render\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="evar.hpp">
+      <Filter>Source Files\evar</Filter>
+    </ClInclude>
+    <ClInclude Include="r_gui_c_items.hpp">
+      <Filter>Source Files\render\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -296,9 +317,6 @@
     <ClCompile Include="sv_ccmds.cpp">
       <Filter>Source Files\sv</Filter>
     </ClCompile>
-    <ClCompile Include="r_gui.cpp">
-      <Filter>Source Files\render</Filter>
-    </ClCompile>
     <ClCompile Include="commands.cpp">
       <Filter>Source Files\engine</Filter>
     </ClCompile>
@@ -316,6 +334,24 @@
     </ClCompile>
     <ClCompile Include="misc_tools.cpp">
       <Filter>Source Files\misc_tools</Filter>
+    </ClCompile>
+    <ClCompile Include="r_gui.cpp">
+      <Filter>Source Files\render\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="r_gui_main.cpp">
+      <Filter>Source Files\render\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_color_gradient.cpp">
+      <Filter>Header Files\lib\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="r_gui_sub_c.cpp">
+      <Filter>Source Files\render\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="evar.cpp">
+      <Filter>Source Files\evar</Filter>
+    </ClCompile>
+    <ClCompile Include="r_gui_c_items.cpp">
+      <Filter>Source Files\render\gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

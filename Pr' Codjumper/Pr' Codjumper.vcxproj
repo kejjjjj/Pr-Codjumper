@@ -90,7 +90,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -101,6 +101,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <BuildStlModules>false</BuildStlModules>
       <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;%(AdditionalLibraryDirectories);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,11 +160,13 @@
     <ClInclude Include="dvar.hpp" />
     <ClInclude Include="entrypoint.hpp" />
     <ClInclude Include="errors.hpp" />
+    <ClInclude Include="evar.hpp" />
     <ClInclude Include="e_utilities.hpp" />
     <ClInclude Include="fs_utilities.hpp" />
     <ClInclude Include="geom_shapes.hpp" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
+    <ClInclude Include="ImGui\imgui_color_gradient.hpp" />
     <ClInclude Include="ImGui\imgui_impl_dx9.h" />
     <ClInclude Include="ImGui\imgui_impl_win32.h" />
     <ClInclude Include="ImGui\imgui_internal.h" />
@@ -185,6 +188,9 @@
     <ClInclude Include="resources.hpp" />
     <ClInclude Include="r_drawtools.hpp" />
     <ClInclude Include="r_gui.hpp" />
+    <ClInclude Include="r_gui_c_items.hpp" />
+    <ClInclude Include="r_gui_main.hpp" />
+    <ClInclude Include="r_gui_sub_c.hpp" />
     <ClInclude Include="r_renderer.hpp" />
     <ClInclude Include="scr_functions.hpp" />
     <ClInclude Include="scr_main.hpp" />
@@ -204,11 +210,15 @@
     <ClCompile Include="dvar.cpp" />
     <ClCompile Include="entrypoint.cpp" />
     <ClCompile Include="errors.cpp" />
+    <ClCompile Include="evar.cpp" />
     <ClCompile Include="e_utilities.cpp" />
     <ClCompile Include="fs_utilities.cpp" />
     <ClCompile Include="geom_shapes.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_color_gradient.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_demo.cpp">
@@ -271,6 +281,9 @@
     <ClCompile Include="r_drawtools.cpp" />
     <ClCompile Include="r_endscene.cpp" />
     <ClCompile Include="r_gui.cpp" />
+    <ClCompile Include="r_gui_c_items.cpp" />
+    <ClCompile Include="r_gui_main.cpp" />
+    <ClCompile Include="r_gui_sub_c.cpp" />
     <ClCompile Include="r_renderer.cpp" />
     <ClCompile Include="scr_functions.cpp" />
     <ClCompile Include="scr_main.cpp" />

@@ -23,7 +23,8 @@ void Resources::create_subdirectory(const std::string& name) const noexcept
 }
 void Resources::recreate_materials()
 {
-	load_font("conduit", "conduit_itc_light1.ttf", 24.f);
+	load_font("conduit", "bahnschrift.ttf", 24.f);
+	load_font("conduit_m", "bahnschrift.ttf", 20.f);
 
 	load_image("visuals", "visuals.png");
 
@@ -58,22 +59,22 @@ void Resources::load_font(const char* name, const std::string& file_name, const 
 	std::cout << "font: " << std::quoted(name) << " added!\n";
 
 }
-std::optional<ImFont*> Resources::FindFont(const std::string& name)
+std::optional<ImFont*> Resources::FindFont(const std::string& name) const noexcept
 {
 	for (const auto& i : fonts) {
 		if (!name.compare(i.second))
 			return i.first;
 	}
-
+	FatalError(std::format("FindFont(): couldn't find font \"{}\"", name));
 	return std::nullopt;
 }
-std::optional<LPDIRECT3DTEXTURE9> Resources::FindTexture(const std::string& name)
+std::optional<LPDIRECT3DTEXTURE9> Resources::FindTexture(const std::string& name) const noexcept
 {
 	for (const auto& i : images) {
 		if (!name.compare(i.second))
 			return i.first;
 	}
-
+	FatalError(std::format("FindTexture(): couldn't find texture \"{}\"", name));
 	return std::nullopt;
 }
 void Resources::load_image(const char* name, const std::string& file_name)
