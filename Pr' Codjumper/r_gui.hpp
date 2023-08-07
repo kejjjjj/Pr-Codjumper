@@ -18,11 +18,17 @@ public:
 	void bottom_categories();
 	void right_categories();
 
-	void append_category(const Gui_MainCategory& category) { categories.push_back(category); };
+	void append_category(const Gui_MainCategory& category) { categories.push_back(category); if (categories.size() == 1) active_category = &categories.front(); };
 
 	ivec2 main_category_first_image_position(const size_t numimages, float spacing) const noexcept;
 	void set_active(Gui_MainCategory& c) noexcept { active_category = &c; }
 private:
+
+	void visuals_create_hardcoded();
+	void visuals_create_strafes(Gui_SubCategory& category);
+
+	void automation_create_hardcoded();
+	void automation_create_movement(Gui_SubCategory& category);
 
 	void render_topbar();
 	void clip_bounds();

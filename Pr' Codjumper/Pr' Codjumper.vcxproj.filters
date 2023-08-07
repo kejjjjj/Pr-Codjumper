@@ -67,6 +67,9 @@
     <Filter Include="Source Files\evar">
       <UniqueIdentifier>{461626ee-758a-477a-8c23-7917665ef519}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\render\gui\features">
+      <UniqueIdentifier>{65277fc5-2c92-49de-a8ab-92bf7108d31e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -352,6 +355,12 @@
     </ClCompile>
     <ClCompile Include="r_gui_c_items.cpp">
       <Filter>Source Files\render\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="r_gui_automation.cpp">
+      <Filter>Source Files\render\gui\features</Filter>
+    </ClCompile>
+    <ClCompile Include="r_gui_visuals.cpp">
+      <Filter>Source Files\render\gui\features</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -79,10 +79,10 @@ void Renderer::end_frame()
 }
 void Renderer::create_theme(const float transparency)
 {
-	const ImVec4 widget_color = ImVec4(127.f / 255, 21.f / 255, 60.f / 255, transparency);
-	const ImVec4 main_color = ImVec4(42.f / 255, 42.f / 255, 42.f / 255, transparency);
+	const ImVec4 widget_color = ImVec4(200.f / 255, 8.f / 255, 11.f / 255, transparency);
+	const ImVec4 main_color = ImVec4(28.f / 255, 28.f / 255, 28.f / 255, transparency);
 	const ImVec4 window_color = ImVec4(42.f / 255, 42.f / 255, 42.f / 255, transparency);
-	const ImVec4 widget_active = ImVec4(40.f / 255, 40.f / 255, 40.f / 255, transparency);
+	const ImVec4 widget_active = ImVec4(200.f / 255, 8.f / 255, 11.f / 255, transparency);
 	const ImVec4 separator_color = ImVec4(117.f / 255, 22.f / 255, 46. / 255, transparency);
 
 	auto& style = ImGui::GetStyle();
@@ -93,10 +93,12 @@ void Renderer::create_theme(const float transparency)
 	style.TabRounding = 10.f;
 	style.GrabRounding = 10.f;
 	style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
+	style.FrameBorderSize = 1.;
 	/*style.WindowPadding = ImVec2(0, 0);*/
 	color[ImGuiCol_CheckMark] = widget_color;
 	color[ImGuiCol_SliderGrabActive] = widget_color;
 	color[ImGuiCol_SliderGrab] = widget_color;
+	//color[ImGuiCol_PopupBg] = widget_color;
 
 	color[ImGuiCol_TitleBg] = main_color;
 	color[ImGuiCol_TitleBgActive] = main_color;
@@ -108,12 +110,13 @@ void Renderer::create_theme(const float transparency)
 
 	color[ImGuiCol_ResizeGrip] = main_color;
 	color[ImGuiCol_ResizeGripActive] = main_color;
-	color[ImGuiCol_Button] = main_color;
+	color[ImGuiCol_Button] = widget_active;
 	color[ImGuiCol_ButtonActive] = widget_active;
 	color[ImGuiCol_ButtonHovered] = widget_active;
 
 	color[ImGuiCol_HeaderHovered] = widget_color;
 	color[ImGuiCol_HeaderActive] = widget_color;
+	color[ImGuiCol_Header] = widget_color;
 
 	color[ImGuiCol_Separator] = separator_color;
 	color[ImGuiCol_SeparatorActive] = separator_color;

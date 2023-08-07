@@ -8,7 +8,7 @@ void Gui_MainCategory::render(const ivec2& pos, const ivec2& maxs, Gui_MainCateg
 		ImGui::GetWindowDrawList()->AddRectFilled(pos, maxs, IM_COL32(255, 255, 255, 55), ImGui::GetStyle().WindowRounding);
 		return;
 	}
-	on_hovered(pos, maxs);
+	on_hovered(pos, maxs, active);
 }
 void Gui_MainCategory::render_image_button(ivec2& pos, ivec2& maxs)
 {
@@ -17,7 +17,7 @@ void Gui_MainCategory::render_image_button(ivec2& pos, ivec2& maxs)
 
 	const auto old_font = ImGui::GetFont();
 
-	if (auto font = resources.FindFont("conduit_m"))
+	if (auto font = resources.FindFont(BAHNSCHRIFT_S))
 		ImGui::SetCurrentFont(font.value());
 
 	const ivec2 textSize = ImGui::CalcTextSize(preview_text.c_str());
@@ -29,20 +29,21 @@ void Gui_MainCategory::render_image_button(ivec2& pos, ivec2& maxs)
 	ImGui::GetWindowDrawList()->AddText(textPos, IM_COL32(158,158,158,255), preview_text.c_str());
 
 	pos.x -= 16;
-	pos.y -= textSize.y/2;
+	pos.y -= textSize.y/2-2;
 	maxs.x += 16;
-	maxs.y += textSize.y + 15;
+	maxs.y += textSize.y + 18;
 	//ImGui::ImageButton(thumbnail, thumbnail_size);
 
 
 }
-void Gui_MainCategory::on_hovered(const ivec2& pos, const ivec2& maxs)
+void Gui_MainCategory::on_hovered(const ivec2& pos, const ivec2& maxs, Gui_MainCategory** active)
 {
 	if (ImGui::IsMouseHoveringRect(pos, maxs, true)) {
 		ImGui::GetWindowDrawList()->AddRectFilled(pos, maxs, IM_COL32(255, 255, 255, 55), ImGui::GetStyle().WindowRounding);
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-
+			*active = this;
 			Com_Printf(CON_CHANNEL_OBITUARY, "^2%s\n", preview_text.c_str());
+
 		}
 	}
 }

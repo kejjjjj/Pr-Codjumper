@@ -2,6 +2,10 @@
 
 #include "pch.hpp"
 
+constexpr const char* BAHNSCHRIFT_M = "bahnschrift_m";
+constexpr const char* BAHNSCHRIFT_S = "bahnschrift_s";
+
+constexpr const char* ARIAL_S = "arial_s";
 
 class Resources
 {

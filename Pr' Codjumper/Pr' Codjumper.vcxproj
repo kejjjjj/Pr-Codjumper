@@ -281,9 +281,11 @@
     <ClCompile Include="r_drawtools.cpp" />
     <ClCompile Include="r_endscene.cpp" />
     <ClCompile Include="r_gui.cpp" />
+    <ClCompile Include="r_gui_automation.cpp" />
     <ClCompile Include="r_gui_c_items.cpp" />
     <ClCompile Include="r_gui_main.cpp" />
     <ClCompile Include="r_gui_sub_c.cpp" />
+    <ClCompile Include="r_gui_visuals.cpp" />
     <ClCompile Include="r_renderer.cpp" />
     <ClCompile Include="scr_functions.cpp" />
     <ClCompile Include="scr_main.cpp" />

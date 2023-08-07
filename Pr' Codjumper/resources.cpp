@@ -23,10 +23,14 @@ void Resources::create_subdirectory(const std::string& name) const noexcept
 }
 void Resources::recreate_materials()
 {
-	load_font("conduit", "bahnschrift.ttf", 24.f);
-	load_font("conduit_m", "bahnschrift.ttf", 20.f);
+	load_font(BAHNSCHRIFT_M, "bahnschrift.ttf", 24.f);
+	load_font(BAHNSCHRIFT_S, "bahnschrift.ttf", 19.5f);
+
+	load_font(ARIAL_S, "Artifakt Element Regular.ttf", 22.f);
+
 
 	load_image("visuals", "visuals.png");
+	load_image("automation", "automation.png");
 
 }
 void Resources::load_font(const char* name, const std::string& file_name, const float scale)

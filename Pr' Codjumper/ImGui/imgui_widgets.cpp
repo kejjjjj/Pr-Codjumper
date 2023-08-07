@@ -1178,16 +1178,28 @@ bool ImGui::Checkbox2(const char* label, bool* v)
 
     }
 
-    ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x*2, check_bb.Min.y - style.FramePadding.y);
+    ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x*2, check_bb.Min.y - style.FramePadding.y*1.5f);
     if (g.LogEnabled)
         LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
     if (label_size.x > 0.0f) {
         if (*v)
             RenderText(label_pos, label);
-        else RenderText(label_pos, label, 0, true, IM_COL32(170,170,170,255));
+        else RenderText(label_pos, label, 0, true, GetColorU32(ImGuiCol_TextDisabled));
     }
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
     return pressed;
+}
+void ImGui::Tooltip(const char* desc)
+{
+    //ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
 }
 template<typename T>
 bool ImGui::CheckboxFlagsT(const char* label, T* flags, T flags_value)
@@ -1639,11 +1651,16 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     const float arrow_size = (flags & ImGuiComboFlags_NoArrowButton) ? 0.0f : GetFrameHeight();
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
     const float w = (flags & ImGuiComboFlags_NoPreview) ? arrow_size : CalcItemWidth();
-    const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect bb(ImVec2(window->DC.CursorPos.x + style.FramePadding.x, window->DC.CursorPos.y + label_size.y /*- style.FramePadding.y*/), window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f + label_size.y));
     const ImRect total_bb(bb.Min, bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id, &bb))
         return false;
+
+    if (label_size.x > 0)
+        RenderText(ImVec2(bb.Min.x + style.ItemInnerSpacing.x - style.FramePadding.x, bb.Min.y -label_size.y - style.FramePadding.y), label);
+
+
 
     // Open on click
     bool hovered, held;
@@ -1661,16 +1678,18 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     const float value_x2 = ImMax(bb.Min.x, bb.Max.x - arrow_size);
     RenderNavHighlight(bb, id);
     if (!(flags & ImGuiComboFlags_NoPreview))
-        window->DrawList->AddRectFilled(bb.Min, ImVec2(value_x2, bb.Max.y), frame_col, style.FrameRounding, (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
+        window->DrawList->AddRectFilled(bb.Min, ImVec2(value_x2, bb.Max.y), frame_col, style.FrameRounding, ImDrawFlags_RoundCornersNone);
     if (!(flags & ImGuiComboFlags_NoArrowButton))
     {
         ImU32 bg_col = GetColorU32((popup_open || hovered) ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
-        ImU32 text_col = GetColorU32(ImGuiCol_Text);
-        window->DrawList->AddRectFilled(ImVec2(value_x2, bb.Min.y), bb.Max, bg_col, style.FrameRounding, (w <= arrow_size) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersRight);
+        ImU32 text_col = GetColorU32(ImGuiCol_TextDisabled);
+        window->DrawList->AddRectFilled(ImVec2(value_x2, bb.Min.y), bb.Max, frame_col, style.FrameRounding, ImDrawFlags_RoundCornersNone);
         if (value_x2 + arrow_size - style.FramePadding.x <= bb.Max.x)
-            RenderArrow(window->DrawList, ImVec2(value_x2 + style.FramePadding.y, bb.Min.y + style.FramePadding.y), text_col, ImGuiDir_Down, 1.0f);
+            RenderArrow(window->DrawList, ImVec2(value_x2 + style.FramePadding.y, bb.Min.y + style.FramePadding.y * 3), text_col, ImGuiDir_Down, 0.5f);
     }
-    RenderFrameBorder(bb.Min, bb.Max, style.FrameRounding);
+    RenderFrameBorder(bb.Min, bb.Max, 0);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
 
     // Custom preview
     if (flags & ImGuiComboFlags_CustomPreview)
@@ -1687,12 +1706,10 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
             LogSetNextTextDecoration("{", "}");
         RenderTextClipped(bb.Min + style.FramePadding, ImVec2(value_x2, bb.Max.y), preview_value, NULL, NULL);
     }
-    if (label_size.x > 0)
-        RenderText(ImVec2(bb.Max.x + style.ItemInnerSpacing.x, bb.Min.y + style.FramePadding.y), label);
-
+    ImGui::PopStyleColor();
     if (!popup_open)
         return false;
-
+    
     g.NextWindowData.Flags = backup_next_window_data_flags;
     return BeginComboPopup(popup_id, bb, flags);
 }
@@ -3153,7 +3170,7 @@ bool ImGui::SliderScalar2(const char* label, ImGuiDataType data_type, void* p_da
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
     const ImVec2 padding = ImVec2(0, style.FramePadding.y * 2);
    // Dummy(padding);
-    const ImRect frame_bb(ImVec2(window->DC.CursorPos.x, window->DC.CursorPos.y + padding.y * 2.1f + label_size.y/2), window->DC.CursorPos + ImVec2(w, label_size.y*1.25f + style.FramePadding.y * 2.f));
+    const ImRect frame_bb(ImVec2(window->DC.CursorPos.x + style.FramePadding.x, window->DC.CursorPos.y + padding.y * 2.1f + label_size.y/2), window->DC.CursorPos + ImVec2(w, label_size.y*1.25f + style.FramePadding.y * 2.f));
     const ImRect total_bb(ImVec2(frame_bb.Min.x , frame_bb.Min.y-style.FramePadding.y), frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x  : 0.0f, padding.y*2+label_size.y/1.5f));
 
     const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
@@ -3216,9 +3233,9 @@ bool ImGui::SliderScalar2(const char* label, ImGuiDataType data_type, void* p_da
         LogSetNextTextDecoration("{", "}");
 
 
-
+    ImGui::PushStyleColor(ImGuiCol_Text, GetColorU32(ImGuiCol_TextDisabled));
     RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x - CalcTextSize(value_buf).x, frame_bb.Min.y - style.FramePadding.y - CalcTextSize(value_buf).y), value_buf, value_buf_end);
-
+    ImGui::PopStyleColor();
     if (label_size.x > 0.0f) {
         RenderText(ImVec2(frame_bb.Min.x, frame_bb.Min.y - style.FramePadding.y -CalcTextSize(value_buf).y), label);
     }

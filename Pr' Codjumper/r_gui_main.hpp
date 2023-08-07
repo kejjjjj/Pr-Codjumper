@@ -14,7 +14,7 @@ public:
 	void set_active(Gui_SubCategory& c) noexcept { active_category = &c; }
 	Gui_SubCategory* get_active() const noexcept { return active_category; };
 private:
-	void on_hovered(const ivec2& pos, const ivec2& maxs);
+	void on_hovered(const ivec2& pos, const ivec2& maxs, Gui_MainCategory** active);
 	void render_image_button(ivec2& pos, ivec2& maxs);
 
 	LPDIRECT3DTEXTURE9 thumbnail;

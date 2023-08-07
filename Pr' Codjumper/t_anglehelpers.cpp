@@ -7,11 +7,19 @@ void T_RenderAssistBall()
 	if (NOT_SERVER)
 		return;
 
+	static auto evar = find_evar<bool>("Aim trainer");
+
+	if (!evar)
+		return;
+
+	if (evar->get() == false)
+		return;
+
 	//if ((GetAsyncKeyState(VK_NUMPAD2) < 0) == false)
 	//	return;
 
 	fvec3 ball_origin;
-	trace_t trace;
+	//trace_t trace;
 	fvec3 fwd(rg->viewOrg);
 	std::optional<float> op;
 

@@ -4,26 +4,8 @@ void Gui::initialize()
 {
 	decltype(auto) resources = Resources::getInstance();
 
-	Gui_MainCategory category(resources.FindTexture("visuals").value(), "Visuals");
-	Gui_SubCategory subcategory("hello");
-	Gui_SubCategory subcategory2("for sure");
-	Gui_SubCategory subcategory3("possibly");
-	Gui_SubCategory subcategory4("pagman");
-
-	append_category(category);
-
-	auto& mainCategory = categories.back();
-
-	mainCategory.append_subcategory(subcategory); //first, so it will be active
-	mainCategory.append_subcategory(subcategory2);
-	mainCategory.append_subcategory(subcategory3);
-	mainCategory.append_subcategory(subcategory4);
-
-	auto subCategory = mainCategory.get_active();
-
-	Gui_CategoryItems items("Anglehelper");
-
-	subCategory->append_itemlist(items);
+	visuals_create_hardcoded();
+	automation_create_hardcoded();
 
 	set_active(categories.front());
 	
@@ -151,7 +133,7 @@ void Gui::bottom_categories()
 		
 		const auto old_font = ImGui::GetFont();
 
-		if (auto font = resources.FindFont("conduit_m"))
+		if (auto font = resources.FindFont(BAHNSCHRIFT_M))
 			ImGui::SetCurrentFont(font.value());
 
 		const int padding = mainSize.x / 1.5f;
@@ -202,12 +184,14 @@ void Gui::right_categories()
 
 	ImGui::SameLine();
 
-	ImGui::BeginChild("right_cat", ivec2(pos.x + size.x - 18, left_maxs.y - 5) - mins, true);
+	ImGui::BeginChild("right_cat", ivec2(pos.x + size.x - 18, left_maxs.y - 5) - mins, false);
+
 
 	for (auto& i : active_category->get_active()->get_items()) {
 
 		const_cast<Gui_CategoryItems&>(i).render();
 	}
+
 
 	ImGui::EndChild();
 
