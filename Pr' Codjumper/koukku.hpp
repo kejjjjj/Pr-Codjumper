@@ -93,6 +93,7 @@ namespace hook //a VERY basic namespace to do the most basic things!
 		{
 			return (reinterpret_cast<Type>(orgFnc))(args...);
 		}
+		T get_ptr() const noexcept { return orgFnc; }
 	private:
 		bool ok = false;
 		LPVOID pTarget = 0;

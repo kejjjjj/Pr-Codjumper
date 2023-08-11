@@ -70,6 +70,12 @@
     <Filter Include="Source Files\render\gui\features">
       <UniqueIdentifier>{65277fc5-2c92-49de-a8ab-92bf7108d31e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\lib\ImGui\implot">
+      <UniqueIdentifier>{a412fcd9-9c8a-409f-98d8-8725d10250c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cl">
+      <UniqueIdentifier>{ff9ba660-21fc-4e1e-8562-65df1f0b9df0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -222,6 +228,18 @@
     <ClInclude Include="r_gui_c_items.hpp">
       <Filter>Source Files\render\gui</Filter>
     </ClInclude>
+    <ClInclude Include="ImGui\implot\implot_internal.h">
+      <Filter>Header Files\lib\ImGui\implot</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\implot\implot.h">
+      <Filter>Header Files\lib\ImGui\implot</Filter>
+    </ClInclude>
+    <ClInclude Include="cl_mouse.hpp">
+      <Filter>Source Files\cl</Filter>
+    </ClInclude>
+    <ClInclude Include="t_movement.hpp">
+      <Filter>Source Files\tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -361,6 +379,21 @@
     </ClCompile>
     <ClCompile Include="r_gui_visuals.cpp">
       <Filter>Source Files\render\gui\features</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot_items.cpp">
+      <Filter>Header Files\lib\ImGui\implot</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot.cpp">
+      <Filter>Header Files\lib\ImGui\implot</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot_demo.cpp">
+      <Filter>Header Files\lib\ImGui\implot</Filter>
+    </ClCompile>
+    <ClCompile Include="cl_mouse.cpp">
+      <Filter>Source Files\cl</Filter>
+    </ClCompile>
+    <ClCompile Include="t_movement.cpp">
+      <Filter>Source Files\tool</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

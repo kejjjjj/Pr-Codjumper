@@ -2,5 +2,6 @@
 
 #include "pch.hpp"
 
-
-void T_RenderAssistBall();
+namespace T::Visuals {
+	void T_RenderAssistBall();
+}

@@ -152,7 +152,7 @@ struct vec3
 		return *reinterpret_cast<T*>(&x + (1ull * index));
 	}
 
-
+	void assign_to(vec3_t out) const noexcept { out[0] = x; out[1] = y; out[2] = z; }
 	float mag() const noexcept {
 		return sqrtf(x * x + y * y + z * z);
 	}

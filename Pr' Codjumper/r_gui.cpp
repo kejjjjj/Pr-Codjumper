@@ -54,6 +54,8 @@ void Gui::render()
 
 	ImGui::End();
 
+	ImPlot::ShowDemoWindow();
+
 }
 
 

@@ -30,6 +30,7 @@ void CG_CreateHooks()
 	hooktable.insert(hookEnums_e::HOOK_PM_WALKMOVE, hook::hookobj<void*>(0x40F7A0, PM_WalkMove, TRUE));
 	hooktable.insert(hookEnums_e::HOOK_PM_AIRMOVE, hook::hookobj<void*>(0x40F680, PM_AirMove, TRUE));
 
+	hooktable.insert(hookEnums_e::HOOK_CL_MOUSEMOVE, hook::hookobj<void*>(0x463400, CL_GetMouseMovement, TRUE));
 
 }
 void CG_ReleaseHooks()

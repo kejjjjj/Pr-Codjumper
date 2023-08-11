@@ -21,7 +21,9 @@ enum class hookEnums_e : short
 	HOOK_GSCR_GETMETHOD,
 
 	HOOK_PM_WALKMOVE,
-	HOOK_PM_AIRMOVE
+	HOOK_PM_AIRMOVE,
+
+	HOOK_CL_MOUSEMOVE
 };
 
 class HookTable

@@ -82,6 +82,8 @@ typedef vec_t vec4_t[4];
 #include "imGui/imgui_internal.h"
 #include "imGui/imgui_stdlib.h"
 
+#include "ImGui/implot/implot.h"
+
 #include "sys_tools.hpp"
 
 
@@ -110,6 +112,8 @@ typedef vec_t vec4_t[4];
 
 #include "bg_pmove.hpp"
 
+#include "cl_mouse.hpp"
+
 #include "r_renderer.hpp"
 #include "r_drawtools.hpp"
 #include "r_gui_c_items.hpp"
@@ -124,6 +128,7 @@ typedef vec_t vec4_t[4];
 #include "scr_functions.hpp"
 
 #include "t_anglehelpers.hpp"
+#include "t_movement.hpp"
 
 #include "com_channel.hpp"
 

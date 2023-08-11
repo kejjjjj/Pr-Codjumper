@@ -44,6 +44,7 @@ void Renderer::initialize_imgui()
 	}
 
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 
 	//std::string font_dir = "C:\\Windows\\Fonts\\Arial.ttf";
@@ -129,6 +130,9 @@ void Renderer::CL_ShutdownRenderer()
 	decltype(auto) resources = Resources::getInstance();
 	std::cout << "shutdown renderer!\n";
 	Com_Printf(CON_CHANNEL_CONSOLEONLY, "shutting down renderer\n");
+
+	if (ImPlot::GetCurrentContext())
+		ImPlot::DestroyContext();
 
 	if (ImGui::GetCurrentContext()) {
 		Com_Printf(CON_CHANNEL_CONSOLEONLY, "also removing imgui context\n");

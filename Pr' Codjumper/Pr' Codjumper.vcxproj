@@ -155,6 +155,7 @@
     <ClInclude Include="cg_init.hpp" />
     <ClInclude Include="cg_local.hpp" />
     <ClInclude Include="cg_offsets.hpp" />
+    <ClInclude Include="cl_mouse.hpp" />
     <ClInclude Include="commands.hpp" />
     <ClInclude Include="com_channel.hpp" />
     <ClInclude Include="dvar.hpp" />
@@ -171,6 +172,8 @@
     <ClInclude Include="ImGui\imgui_impl_win32.h" />
     <ClInclude Include="ImGui\imgui_internal.h" />
     <ClInclude Include="ImGui\imgui_stdlib.h" />
+    <ClInclude Include="ImGui\implot\implot.h" />
+    <ClInclude Include="ImGui\implot\implot_internal.h" />
     <ClInclude Include="ImGui\imstb_rectpack.h" />
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
@@ -199,12 +202,14 @@
     <ClInclude Include="sys_tools.hpp" />
     <ClInclude Include="typedefs.hpp" />
     <ClInclude Include="t_anglehelpers.hpp" />
+    <ClInclude Include="t_movement.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bg_pmove.cpp" />
     <ClCompile Include="cg_angles.cpp" />
     <ClCompile Include="cg_hooks.cpp" />
     <ClCompile Include="cg_init.cpp" />
+    <ClCompile Include="cl_mouse.cpp" />
     <ClCompile Include="commands.cpp" />
     <ClCompile Include="com_channel.cpp" />
     <ClCompile Include="dvar.cpp" />
@@ -247,6 +252,15 @@
     </ClCompile>
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot_items.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="koukku.cpp" />
@@ -293,6 +307,7 @@
     <ClCompile Include="sv_ccmds.cpp" />
     <ClCompile Include="sys_tools.cpp" />
     <ClCompile Include="t_anglehelpers.cpp" />
+    <ClCompile Include="t_movement.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

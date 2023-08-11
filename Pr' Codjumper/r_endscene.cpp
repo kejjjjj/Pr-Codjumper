@@ -21,11 +21,44 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 
 	if (renderer.begin_frame()) {
 		
-	//	ImGui::GetBackgroundDrawList()->AddText(ivec2(100, 100), 0xFF0000FF, "yo fuckers xD");
+		//ImGui::GetBackgroundDrawList()->AddText(ivec2(100, 100), 0xFF0000FF, std::to_string(ps_loc->delta_angles[YAW]).c_str());
 
-		T_RenderAssistBall();
+		T::Visuals::T_RenderAssistBall();
 
 		gui.render();		
+
+		//ImGui::Begin("##huuuh", 0, /*ImGuiWindowFlags_AlwaysAutoResize | */ImGuiWindowFlags_NoTitleBar);
+
+		//static ScrollingBuffer sdata1, sdata2;
+		//static RollingBuffer   rdata1, rdata2;
+		//ImVec2 mouse = ImGui::GetMousePos();
+		//static float t = 0;
+		//t += ImGui::GetIO().DeltaTime;
+
+		//static fvec2& delta = PlayerMouse::get().delta;
+
+		//sdata1.AddPoint(t, delta.x * 0.1f);
+		//rdata1.AddPoint(t, delta.x * 0.1f);
+		//sdata2.AddPoint(t, delta.y * 0.1f);
+		//rdata2.AddPoint(t, delta.y * 0.1f);
+
+		//static float history = 8.0f;
+		//rdata1.Span = history;
+		//rdata2.Span = history;
+
+		//static ImPlotAxisFlags x_flags = ImPlotAxisFlags_NoGridLines | ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels;
+		//static ImPlotAxisFlags y_flags = ImPlotAxisFlags_AutoFit;
+
+		//if (ImPlot::BeginPlot("##Scrolling", ImVec2(-1, 150), ImPlotFlags_NoMouseText | ImPlotFlags_Crosshairs)) {
+		//	ImPlot::SetupAxes(nullptr, nullptr, x_flags, y_flags);
+		//	ImPlot::SetupAxisLimits(ImAxis_X1, t - history, t, ImGuiCond_Always);
+		//	ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
+
+		//	//ImPlot::SetupAxisTicks(ImAxis_Y1, )
+		//	ImPlot::SetNextFillStyle(ImVec4(0,255,0,255), 1.f);
+		//	ImPlot::PlotLine("##Mouse X", &sdata1.Data[0].x, &sdata1.Data[0].y, sdata1.Data.size(), 0, sdata1.Offset, 2 * sizeof(float));
+		//	ImPlot::EndPlot();
+		//}
 
 		renderer.end_frame();
 	}

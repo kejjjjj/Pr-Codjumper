@@ -20,8 +20,13 @@ void Gui::automation_create_movement(Gui_SubCategory& category)
 
 	Gui_CategoryItems items("Strafing");
 
-	const auto aimtrainer = instance.add_variable<bool>("Strafebot", false);
-	items.append_item(Gui_Item(aimtrainer, "this doesn't do anything yet!", std::nullopt, true));
+	const auto strafebot = instance.add_variable<bool>("Strafebot", false);
+	const auto overstrafe_correction = instance.add_variable<bool>("Overstrafe Correction", true);
+
+
+	items.append_item(Gui_Item(strafebot, "optimal acceleration", std::nullopt, true));
+	items.append_item(Gui_Item(overstrafe_correction, "blocks the player from overstrafing", std::nullopt, true));
+
 	category.append_itemlist(items);
 
 

@@ -34,7 +34,10 @@ std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml)
 	float g_speed = pm->ps->speed;
 	int FPS = 1000 / pml->msec;
 
-	const float accel = g_speed / FPS;
+	float accel = FPS / g_speed;
+
+	if (accel < 1)
+		accel = g_speed / FPS;
 
 	WeaponDef* weapon = BG_WeaponNames[pm->ps->weapon];
 
@@ -44,9 +47,6 @@ std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml)
 
 		if ((pm->cmd.buttons & 8194) != 0){
 			g_speed = (pm->ps->speed / (weapon->moveSpeedScale * (pml->groundTrace.normal[2])) * Dvar_FindMalleableVar("player_sprintSpeedScale")->current.value) / 1.26106f;
-
-			if (GetAsyncKeyState(VK_MBUTTON) & 1)
-				Com_Printf(CON_CHANNEL_OBITUARY, "^2%i\n", (int)g_speed);
 		}
 
 	}
@@ -61,11 +61,18 @@ std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml)
 		return std::nullopt;
 
 	if (rightmove > 0) {
-		return AngleDelta(yaw + accelerationAng, (velocitydirection - diff));
+		return -AngleDelta(yaw + accelerationAng, (velocitydirection - diff));
 	}
 	else if (rightmove < 0) {
-		return AngleDelta(yaw + accelerationAng, (velocitydirection + diff));
+		return -AngleDelta(yaw + accelerationAng, (velocitydirection + diff));
 	}
 
 	return std::nullopt;
+}
+float AngularDistance(float value1, float value2) {
+	float diff = fmod(value2 - value1 + 180, 360) - 180;
+	if (diff < -180) {
+		diff += 360;
+	}
+	return std::abs(diff);
 }

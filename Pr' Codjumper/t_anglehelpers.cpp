@@ -1,7 +1,7 @@
 #include "pch.hpp"
 
 
-void T_RenderAssistBall()
+void T::Visuals::T_RenderAssistBall()
 {
 
 	if (NOT_SERVER)

@@ -31,10 +31,11 @@ void Gui_Item::render()
 	if (checkbox) {
 		auto o = linked_variable->get_raw();
 		ImGui::Checkbox2(linked_variable->get_name().c_str(), (bool*)o);
-		ImGui::SameLine();
+		//ImGui::SameLine();
 		ImGui::Tooltip(tooltip);
 	}
 
+	
 }
 
 void Gui_CategoryItems::render()
