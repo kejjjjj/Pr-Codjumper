@@ -27,14 +27,14 @@ std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml)
 
 	float speed = fvec2(pm->ps->velocity).mag();
 
-	if (speed < 1 || forwardmove != 127 && rightmove != 0)
+	if (speed < 1 || forwardmove != 127 || rightmove == 0)
 		return std::nullopt;
 
 
 	float g_speed = pm->ps->speed;
-	int FPS = 1000 / pml->msec;
+	float FPS = 1000.f / pml->msec;
 
-	float accel = FPS / g_speed;
+	float accel = FPS / g_speed * pow(333 / FPS, 2);
 
 	if (accel < 1)
 		accel = g_speed / FPS;
@@ -55,7 +55,7 @@ std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml)
 	const float accelerationAng = atan2(-rightmove, forwardmove) * 180.f / PI;
 	const float diff = acos((g_speed - accel) / speed) * 180.f / PI;
 
-	float& yaw = pm->ps->viewangles[YAW];
+	float yaw = pm->ps->viewangles[YAW];
 
 	if (std::isnan(diff))
 		return std::nullopt;

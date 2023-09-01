@@ -1355,6 +1355,20 @@ struct playerState_s
 	int killCamEntity;
 	$15067B6A14D88D7E1E730369692C3A81 hud;
 };
+enum statIndex_t
+{
+	STAT_HEALTH = 0x0,
+	STAT_DEAD_YAW = 0x1,
+	STAT_MAX_HEALTH = 0x2,
+	STAT_IDENT_CLIENT_NUM = 0x3,
+	STAT_SPAWN_COUNT = 0x4,
+	MAX_STATS = 0x5,
+};
+struct pmoveHandler_t
+{
+	void(__cdecl* trace)(struct trace_t*, const float*, const float*, const float*, const float*, int, int);
+	void(__cdecl* playerEvent)(int, int);
+};
 
 struct areaParms_t
 {
@@ -7786,7 +7800,7 @@ struct circleZone_t
 
 struct axialPlane_t
 {
-	//glm::vec3 plane;
+	vec3_t plane;
 	float dist;
 };
 

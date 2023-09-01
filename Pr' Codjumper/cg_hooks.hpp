@@ -22,6 +22,7 @@ enum class hookEnums_e : short
 
 	HOOK_PM_WALKMOVE,
 	HOOK_PM_AIRMOVE,
+	HOOK_PM_UPDATE_VIEWANGLES,
 
 	HOOK_CL_MOUSEMOVE
 };

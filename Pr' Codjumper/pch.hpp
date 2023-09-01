@@ -7,6 +7,8 @@
 #ifndef PCH_H
 #define PCH_H
 
+#define GAME_PRINT(x) Com_Printf(CON_CHANNEL_OBITUARY, x);
+
 constexpr auto GAME_NAME = "Call of Duty 4";
 constexpr auto MODULE_NAME = "iw3mp.exe";
 
@@ -131,6 +133,8 @@ typedef vec_t vec4_t[4];
 #include "t_movement.hpp"
 
 #include "com_channel.hpp"
+
+#include "cm_brush.hpp"
 
 #include "geom_shapes.hpp"
 #include "misc_tools.hpp"

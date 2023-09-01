@@ -27,6 +27,38 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 
 		gui.render();		
 
+		if (GetAsyncKeyState(VK_NUMPAD5) & 1) {
+			auto idx = rand() % cm->numBrushes;
+
+			while (!&cm->brushes[idx] || cm->brushes[idx].numsides == 0) {
+				idx = rand() % cm->numBrushes;
+
+				if (&cm->brushes[idx]) {
+					if (cm->brushes[idx].numsides == 0)
+						continue;
+				}
+			}
+
+
+			CM_GetPolys(&cm->brushes[idx]);
+			Com_Printf(CON_CHANNEL_OBITUARY, "index: ^2%i\n", idx);
+
+		}
+
+		if (numColPoints) {
+
+			for (int i = 0; i < numColPoints; i++) {
+
+				if (auto p = WorldToScreen(pts[i].xyz)) {
+
+					ImGui::GetBackgroundDrawList()->AddCircleFilled(p.value(), 4, IM_COL32(255, 0, 0, 255), 0);
+
+				}
+
+			}
+
+		}
+
 		//ImGui::Begin("##huuuh", 0, /*ImGuiWindowFlags_AlwaysAutoResize | */ImGuiWindowFlags_NoTitleBar);
 
 		//static ScrollingBuffer sdata1, sdata2;
@@ -73,7 +105,7 @@ void __cdecl Renderer::CG_DrawActive()
 
 	char buffer[128];
 
-	sprintf_s(buffer, "x:     %.6f\ny:     %.6f\nz:     %.6f\nyaw: %.6f", clients->cgameOrigin[0], clients->cgameOrigin[1], clients->cgameOrigin[2], cgs->refdefViewAngles[YAW]);
+	sprintf_s(buffer, "x:     %.6f\ny:     %.6f\nz:     %.6f\nyaw: %.6f", clients->cgameOrigin[0], clients->cgameOrigin[1], clients->cgameOrigin[2], clients->cgameViewangles[YAW]);
 
 	float col[4] = { 0,1,0,1 };
 	float glowCol[4] = { 0,0,0,0 };
