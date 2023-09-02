@@ -343,3 +343,5 @@ namespace COL
 	constexpr Pixel GREY = Pixel(100, 100, 100, 255);
 
 }
+
+

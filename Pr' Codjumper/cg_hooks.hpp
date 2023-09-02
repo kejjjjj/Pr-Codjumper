@@ -24,6 +24,8 @@ enum class hookEnums_e : short
 	HOOK_PM_AIRMOVE,
 	HOOK_PM_UPDATE_VIEWANGLES,
 
+	HOOK_RB_ENDSCENE,
+
 	HOOK_CL_MOUSEMOVE
 };
 

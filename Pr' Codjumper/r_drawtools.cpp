@@ -337,3 +337,18 @@ void R_DrawTriangle(vec3_t pointA, vec3_t pointB, vec3_t pointC, vec4_t col)
 	ImGui::GetBackgroundDrawList()->AddTriangleFilled(a.value(), b.value(), c.value(), IM_COL32(col[0], col[1], col[2], col[3]));
 
 }
+void R_DrawLine(vec3_t pointA, vec3_t pointB, vec4_t col)
+{
+	std::optional<ivec2> a, b;
+
+	a = WorldToScreen(pointA);
+	b = WorldToScreen(pointB);
+
+
+	if ((a && b) == false) {
+		return;
+	}
+
+	ImGui::GetBackgroundDrawList()->AddLine(a.value(), b.value(), IM_COL32(col[0], col[1], col[2], col[3]), 3);
+
+}

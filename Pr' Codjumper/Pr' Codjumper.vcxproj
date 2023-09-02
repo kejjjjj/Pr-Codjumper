@@ -159,6 +159,7 @@
     <ClInclude Include="cm_brush.hpp" />
     <ClInclude Include="commands.hpp" />
     <ClInclude Include="com_channel.hpp" />
+    <ClInclude Include="com_vector.hpp" />
     <ClInclude Include="dvar.hpp" />
     <ClInclude Include="entrypoint.hpp" />
     <ClInclude Include="errors.hpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="mh\trampoline.h" />
     <ClInclude Include="misc_tools.hpp" />
     <ClInclude Include="pch.hpp" />
+    <ClInclude Include="rb_endscene.hpp" />
     <ClInclude Include="resources.hpp" />
     <ClInclude Include="r_drawtools.hpp" />
     <ClInclude Include="r_gui.hpp" />
@@ -214,6 +216,7 @@
     <ClCompile Include="cm_brush.cpp" />
     <ClCompile Include="commands.cpp" />
     <ClCompile Include="com_channel.cpp" />
+    <ClCompile Include="com_vector.cpp" />
     <ClCompile Include="dvar.cpp" />
     <ClCompile Include="entrypoint.cpp" />
     <ClCompile Include="errors.cpp" />
@@ -293,6 +296,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="rb_endscene.cpp" />
     <ClCompile Include="resources.cpp" />
     <ClCompile Include="r_drawtools.cpp" />
     <ClCompile Include="r_endscene.cpp" />

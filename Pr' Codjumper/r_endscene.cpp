@@ -28,37 +28,108 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 		gui.render();		
 
 		if (GetAsyncKeyState(VK_NUMPAD5) & 1) {
-			auto idx = rand() % cm->numBrushes;
+			int idx = int(random(cm->numBrushes));
+			while (!&cm->brushes[idx] ||cm->brushes[idx].numsides == 0
+				/* std::string(cm->materials[cm->brushes[idx].axialMaterialNum[0][0]].material).find("clip") == std::string::npos*/) {
+				idx = int(random(cm->numBrushes));
+				//srand(time(NULL));
+				//if (&cm->brushes[idx]) {
 
-			while (!&cm->brushes[idx] || cm->brushes[idx].numsides == 0) {
-				idx = rand() % cm->numBrushes;
+				//	if (cm->brushes[idx].numsides == 0)
+				//		continue;
 
-				if (&cm->brushes[idx]) {
-					if (cm->brushes[idx].numsides == 0)
-						continue;
-				}
+				//}
 			}
-
-
+			
+			brushWindings.clear();
 			CM_GetPolys(&cm->brushes[idx]);
 			Com_Printf(CON_CHANNEL_OBITUARY, "index: ^2%i\n", idx);
-
+			VectorCopy(cm->brushes[idx].maxs, ps_loc->origin);
+			
 		}
 
-		if (numColPoints) {
+		if (!brushWindings.empty()) {
 
-			for (int i = 0; i < numColPoints; i++) {
+			const auto r = [](winding_t* w) {
+				int idx = 1;
+				float begin[3] = { w->p[0][0], w->p[0][1], w->p[0][2] };
+				float* end;
 
-				if (auto p = WorldToScreen(pts[i].xyz)) {
 
-					ImGui::GetBackgroundDrawList()->AddCircleFilled(p.value(), 4, IM_COL32(255, 0, 0, 255), 0);
+				//int total = std::clamp(w->numpoints,0, 4);
+				int total = w->numpoints - 1;
+				do{
+					end = w->p[idx];
+					R_DrawLine(begin, end, vec4_t{0,255,0,170});
 
-				}
+					auto b = WorldToScreen(begin);
+					auto e = WorldToScreen(end);
+
+					if (b && e) {
+						ImGui::GetBackgroundDrawList()->AddText(b.value(), IM_COL32(255, 0, 0, 255), (std::to_string(idx)).c_str());
+						//ImGui::GetBackgroundDrawList()->AddText(e.value(), IM_COL32(255, 0, 0, 255), (std::to_string(idx)).c_str());
+
+
+					}
+
+					--total;
+					++idx;
+
+					VectorCopy(end, begin);
+
+					if(idx == 3)
+						break;
+				} while (total);
+
+				//R_DrawLine(w->p[0], end, vec4_t{ 0,255,0,170 });
+
+
+			};
+
+
+			int idx = 0;
+
+		
+			static int winding = 0;
+
+			if (GetAsyncKeyState(VK_UP) & 1) {
+				winding++;
+				if (brushWindings.size()-1 < winding)
+					--winding;
+
+				Com_Printf(CON_CHANNEL_OBITUARY, "winding[^2%i^7]\n", winding);
+			}
+			else if (GetAsyncKeyState(VK_DOWN) & 1) {
+				if (winding > 0)
+					winding--;
+				Com_Printf(CON_CHANNEL_OBITUARY, "winding[^1%i^7]\n", winding);
 
 			}
 
-		}
+			auto it = brushWindings.begin();
+			std::advance(it, winding);
 
+			r(&*it);
+
+			//for (auto it = brushWindings.begin(); it != brushWindings.end(); it++) {
+			//	r(&*it);
+			//}
+
+			//auto b = WorldToScreen(brushWindings.begin()->p[1]);
+			//auto c = WorldToScreen(brushWindings.begin()->p[0]);
+
+			//if (b && c) {
+			//	ImGui::GetBackgroundDrawList()->AddText(b.value(), IM_COL32(0, 255, 0, 255), (std::string("FRONT ") + std::to_string(idx)).c_str());
+			//	ImGui::GetBackgroundDrawList()->AddText(c.value(), IM_COL32(0, 255, 0, 255), (std::string("END ") + std::to_string(idx)).c_str());
+
+			//}
+			//if (auto p = WorldToScreen(brushPoints_l.front())) {
+
+			//	ImGui::GetBackgroundDrawList()->AddCircleFilled(p.value(), 3, IM_COL32(0, 255, 0, 255));
+
+			//}
+
+		}
 		//ImGui::Begin("##huuuh", 0, /*ImGuiWindowFlags_AlwaysAutoResize | */ImGuiWindowFlags_NoTitleBar);
 
 		//static ScrollingBuffer sdata1, sdata2;

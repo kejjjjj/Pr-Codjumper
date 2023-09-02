@@ -33,3 +33,4 @@ ScreenPlacement* CG_GetScreenPlacement(int LocalClientNum);
 std::optional<ivec2> WorldToScreen(const fvec3& location);
 
 void R_DrawTriangle(vec3_t pointA, vec3_t pointB, vec3_t pointC, vec4_t col);
+void R_DrawLine(vec3_t pointA, vec3_t pointB, vec4_t col);

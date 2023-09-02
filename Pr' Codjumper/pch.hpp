@@ -68,6 +68,8 @@ typedef vec_t vec4_t[4];
 #include <direct.h>
 #include <type_traits>
 #include <stdexcept>
+#include <random> // for std::mt19937
+
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
@@ -90,6 +92,8 @@ typedef vec_t vec4_t[4];
 
 
 #include "mh/MinHook.h"
+
+#include "com_vector.hpp"
 
 #include "entrypoint.hpp"
 #include "resources.hpp"
@@ -128,6 +132,8 @@ typedef vec_t vec4_t[4];
 #include "scr_main.hpp"
 #include "scr_utilities.hpp"
 #include "scr_functions.hpp"
+
+#include "rb_endscene.hpp"
 
 #include "t_anglehelpers.hpp"
 #include "t_movement.hpp"

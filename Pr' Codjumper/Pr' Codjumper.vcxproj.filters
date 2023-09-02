@@ -79,6 +79,9 @@
     <Filter Include="Source Files\cmod">
       <UniqueIdentifier>{ce734842-0aaf-4f73-a737-6fcedc32af72}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\rb">
+      <UniqueIdentifier>{247b0ed2-f070-4c90-800d-ff041cf2369b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -246,6 +249,12 @@
     <ClInclude Include="cm_brush.hpp">
       <Filter>Source Files\cmod</Filter>
     </ClInclude>
+    <ClInclude Include="com_vector.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rb_endscene.hpp">
+      <Filter>Source Files\rb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -403,6 +412,12 @@
     </ClCompile>
     <ClCompile Include="cm_brush.cpp">
       <Filter>Source Files\cmod</Filter>
+    </ClCompile>
+    <ClCompile Include="com_vector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rb_endscene.cpp">
+      <Filter>Source Files\rb</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

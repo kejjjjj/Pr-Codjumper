@@ -13,6 +13,8 @@ void CG_Init()
     decltype(auto) resources = Resources::getInstance();
     decltype(auto) gui = Gui::getInstance();
 
+    
+
     if (!renderer.initialize())
         return;
 

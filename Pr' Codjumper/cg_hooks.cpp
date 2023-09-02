@@ -33,6 +33,9 @@ void CG_CreateHooks()
 
 	hooktable.insert(hookEnums_e::HOOK_CL_MOUSEMOVE, hook::hookobj<void*>(0x463400, CL_GetMouseMovement, TRUE));
 
+	hooktable.insert(hookEnums_e::HOOK_RB_ENDSCENE, hook::hookobj<void*>(0x658860, RB_DrawDebug, TRUE));
+
+
 }
 void CG_ReleaseHooks()
 {
