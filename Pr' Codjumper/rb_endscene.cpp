@@ -1,11 +1,21 @@
 #include "pch.hpp"
 
 
-void RB_DrawPolyInteriors(int n_points, const vec3_t* points, const BYTE* color, bool two_sided, bool depthTest)
+void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* color, bool two_sided, bool depthTest, bool show)
 {
 	//partly copied from iw3xo :)
 	if (n_points < 3)
 		return;
+
+
+	bool show_all = GetAsyncKeyState(VK_NUMPAD6) & 1;
+	if (show) {
+		std::cout << "tris[0]: {" << points[0].x << ", " << points[0].y << ", " << points[0].z << "}\n";
+		std::cout << "tris[1]: {" << points[1].x << ", " << points[1].y << ", " << points[1].z << "}\n";
+		std::cout << "tris[2]: {" << points[2].x << ", " << points[2].y << ", " << points[2].z << "}\n";
+
+	}
+
 	static Material whiteMaterial = *rgp->whiteMaterial;
 	static uint32_t ogBits = whiteMaterial.stateBitsTable->loadBits[1];
 
@@ -36,7 +46,8 @@ void RB_DrawPolyInteriors(int n_points, const vec3_t* points, const BYTE* color,
 	int idx = 0;
 
 	for (; idx < n_points; ++idx) {
-		RB_SetPolyVertice(points[idx], color, tess->vertexCount + idx, idx);
+		vec3_t p = { points[idx].x, points[idx].y, points[idx].z };
+		RB_SetPolyVertice(p, color, tess->vertexCount + idx, idx);
 	}
 
 	for (idx = 2; idx < n_points; ++idx)
@@ -84,7 +95,13 @@ int RB_AddDebugLine(GfxPointVertex* verts, char depthTest, const vec_t* start, v
 }
 void R_ConvertColorToBytes(const vec4_t in, uint8_t* out)
 {
-
+	//__asm
+	//{
+	//	lea edx, out;
+	//	mov ecx, in;
+	//	mov esi, 0x493530;
+	//	call esi;
+	//}
 	((char(__fastcall*)(const float* in, uint8_t * out))0x493530)(in, out);
 
 	return;
@@ -157,6 +174,8 @@ char RB_DrawDebug(GfxViewParms* viewParms)
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_RB_ENDSCENE);
 
 
+	for (auto& i : brushWindings)
+		RB_RenderWinding(&i);
 
 	return detour_func.cast_call<char(*)(GfxViewParms*)>(viewParms);
 }

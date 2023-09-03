@@ -419,5 +419,8 @@
     <ClCompile Include="rb_endscene.cpp">
       <Filter>Source Files\rb</Filter>
     </ClCompile>
+    <ClCompile Include="r_gui_geometry.cpp">
+      <Filter>Source Files\render\gui\features</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

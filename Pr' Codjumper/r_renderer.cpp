@@ -169,6 +169,13 @@ LRESULT __stdcall Renderer::WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, L
 		return 1l;
 	}
 
+	switch (uMsg) {
+	case WM_SYSCOMMAND:
+		if ((wParam & 0xfff0) == SC_KEYMENU)
+			return 0;
+		break;
+	}
+
 	return detour_func.cast_call<LRESULT(*)(HWND, UINT, WPARAM, LPARAM)>(hWnd, uMsg, wParam, lParam);
 
 }

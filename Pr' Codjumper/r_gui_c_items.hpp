@@ -15,16 +15,17 @@ public:
 			float max;
 		}value;
 	};
-	Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::shared_ptr<_slider>> sliderData, bool isCheckbox);
+	Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::function<void(bool)>> onClicked=std::nullopt, std::optional<std::shared_ptr<_slider>> sliderData = std::nullopt, bool isCheckbox = false, bool isInputbox = false);
 
 	void render();
 
 private:
 	EvarBase* linked_variable = 0;
 	bool checkbox = false;
+	bool inputbox = false;
 	std::shared_ptr<_slider> slider;
 	const char* tooltip;
-
+	std::function<void(bool)> activation_event;
 };
 
 

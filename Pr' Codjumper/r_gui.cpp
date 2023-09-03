@@ -6,6 +6,7 @@ void Gui::initialize()
 
 	visuals_create_hardcoded();
 	automation_create_hardcoded();
+	geometry_create_hardcoded();
 
 	set_active(categories.front());
 	
@@ -25,6 +26,7 @@ void Gui::close() noexcept
 {
 	IN_ActivateMouse(true);
 	UI_SetSystemCursorPos(320.f, 240.f);
+	IN_ActivateKeyboard(true);
 	ImGui::GetIO().MouseDrawCursor = false;
 	is_open = false;
 }
@@ -32,7 +34,10 @@ void Gui::open() noexcept
 {
 	IN_ActivateMouse(false);
 	UI_SetSystemCursorPos(320.f, 240.f);
+	IN_ActivateKeyboard(false);
+
 	ImGui::GetIO().MouseDrawCursor = true;
+
 	is_open = true;
 }
 void Gui::reset()
@@ -44,6 +49,9 @@ void Gui::render()
 	if (!is_open)
 		return;
 
+	if (GetAsyncKeyState(VK_ESCAPE) & 1)
+		close();
+
 	ImGui::Begin("cj", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar/*ImGuiWindowFlags_AlwaysAutoResize*/);
 
 
@@ -54,7 +62,7 @@ void Gui::render()
 
 	ImGui::End();
 
-	ImPlot::ShowDemoWindow();
+	//ImPlot::ShowDemoWindow();
 
 }
 

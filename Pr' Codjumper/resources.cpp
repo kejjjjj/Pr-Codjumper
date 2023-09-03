@@ -31,6 +31,7 @@ void Resources::recreate_materials()
 
 	load_image("visuals", "visuals.png");
 	load_image("automation", "automation.png");
+	load_image("clipmap", "clipmap.png");
 
 }
 void Resources::load_font(const char* name, const std::string& file_name, const float scale)

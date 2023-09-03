@@ -21,6 +21,8 @@ cmd_function_s* Cmd_AddCommand(const char* cmdname, void(__cdecl* function)());
 cmd_function_s* Cmd_RemoveCommand(const char* cmdname);
 
 void IN_ActivateMouse(bool active);
+void IN_ActivateKeyboard(bool active);
+
 void UI_SetSystemCursorPos(float x, float y);
 
 void __cdecl CG_TracePoint(const vec3_t maxs, trace_t* trace, const vec3_t start, const vec3_t mins, const vec3_t end, int entityNum, int contentMask, int locational, int staticModels);

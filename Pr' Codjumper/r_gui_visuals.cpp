@@ -19,7 +19,7 @@ void Gui::visuals_create_strafes(Gui_SubCategory& category)
 	Gui_CategoryItems items("Strafing");
 	
 	const auto aimtrainer = instance.add_variable<bool>("Aim trainer", false);
-	items.append_item(Gui_Item(aimtrainer, "creates a ball that you have to look at with your cursor", std::nullopt, true));
+	items.append_item(Gui_Item(aimtrainer, "creates a ball that you have to look at with your cursor", std::nullopt, std::nullopt, true));
 	category.append_itemlist(items);
 
 

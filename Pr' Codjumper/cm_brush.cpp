@@ -5,8 +5,7 @@ bool is_on_grid(const float* snapped, const float* xyz)
 	return xyz[0] == snapped[0] && xyz[1] == snapped[1] && xyz[2] == snapped[2];
 }
 
-// snap points to grid. might prod. some issues
-void snap_point_to_intersecting_planes(const float* plane0, const float* plane1, const float* plane2, float* xyz, float snap_grid, const float snap_epsilon)
+void SnapPointToIntersectingPlanes(const float* plane0, const float* plane1, const float* plane2, float* xyz, float snap_grid, const float snap_epsilon)
 {
 	float snapped[3], current_plane[4];
 
@@ -149,7 +148,7 @@ void CM_GetPlaneVec4Form(const cbrushside_t* sides, const float(*axialPlanes)[4]
 	expandedPlane[3] = plane[3];
 
 }
-int CM_ForEachBrushPlaneIntersection(const cbrush_t* brush, const float(*axialPlanes)[4], ShowCollisionBrushPt* brushPts)
+int CM_ForEachBrushPlaneIntersection(const cbrush_t* brush, const float(*axialPlanes)[4], std::vector<ShowCollisionBrushPt>& brushPts)
 {
 	int brushPoint = 0;
 	cbrushside_t* brushside = brush->sides;
@@ -195,7 +194,7 @@ int CM_ForEachBrushPlaneIntersection(const cbrush_t* brush, const float(*axialPl
 							CM_GetPlaneVec4Form(brushside, axialPlanes, nextSide3, expanded_plane[2]);
 
 							if (IntersectPlanes(expanded_plane, out_pts)) {
-								snap_point_to_intersecting_planes(expanded_plane[0], expanded_plane[1], expanded_plane[2], out_pts, 0.25f, 0.0099999998f);
+								SnapPointToIntersectingPlanes(expanded_plane[0], expanded_plane[1], expanded_plane[2], out_pts, 0.25f, 0.0099999998f);
 								points = CM_AddSimpleBrushPoint(brush, axialPlanes, sideIdx, out_pts, points, brushPts);
 
 							}
@@ -217,7 +216,7 @@ int CM_ForEachBrushPlaneIntersection(const cbrush_t* brush, const float(*axialPl
 	return points;
 
 }
-int CM_AddSimpleBrushPoint(const cbrush_t* brush, const float(*axialPlanes)[4], const __int16* sideIndices, const float* xyz, int pt_count, ShowCollisionBrushPt* brushPoints)
+int CM_AddSimpleBrushPoint(const cbrush_t* brush, const float(*axialPlanes)[4], const __int16* sideIndices, const float* xyz, int pt_count, std::vector<ShowCollisionBrushPt>& brushPoints)
 {
 	int sIndex = 0;
 	do
@@ -247,9 +246,9 @@ int CM_AddSimpleBrushPoint(const cbrush_t* brush, const float(*axialPlanes)[4], 
 		return pt_count;
 	}
 
-
-	VectorCopy(xyz, brushPoints[pt_count].xyz);
-	VectorCopy(sideIndices, brushPoints[pt_count].sideIndex);
+	brushPoints.push_back(std::move(ShowCollisionBrushPt{ .xyz = {xyz[0], xyz[1], xyz[2]},.sideIndex = {sideIndices[0], sideIndices[1], sideIndices[2]}}));
+	//VectorCopy(xyz, brushPoints[pt_count].xyz);
+	//VectorCopy(sideIndices, brushPoints[pt_count].sideIndex);
 
 
 	return pt_count+1;
@@ -278,11 +277,11 @@ void CM_AddExteriorPointToWindingProjected(winding_t* w, const float* pt, int i,
 	}
 
 	if (bestIndex < 0) {
-		Com_Printf(CON_CHANNEL_OBITUARY, "^1epic index failure!\n");
+		//Com_Printf(CON_CHANNEL_OBITUARY, "^1epic index failure!\n");
 		return;
 	}
 
-	std::cout << "best: " << best << '\n';
+	//std::cout << "best: " << best << '\n';
 
 	if (best < -0.001f) {
 		char* offs = (char*)w + 12 * bestIndex;
@@ -294,11 +293,11 @@ void CM_AddExteriorPointToWindingProjected(winding_t* w, const float* pt, int i,
 	}
 
 	else if (best <= 0.001f) {
-		Com_Printf(CON_CHANNEL_OBITUARY, "CM_AddColinearExteriorPointToWindingProjected!\n");
+		//Com_Printf(CON_CHANNEL_OBITUARY, "CM_AddColinearExteriorPointToWindingProjected!\n");
 		CM_AddColinearExteriorPointToWindingProjected(w, pt, i, j, (bestIndex + w->numpoints-1) % w->numpoints,bestIndex);
 	}
 
-	std::cout << "numpoints: " << w->numpoints << '\n';
+	//std::cout << "numpoints: " << w->numpoints << '\n';
 
 }
 float CM_RepresentativeTriangleFromWinding(const winding_t* w, const float* normal, int* i0, int* i1, int* i2)
@@ -334,7 +333,7 @@ float CM_RepresentativeTriangleFromWinding(const winding_t* w, const float* norm
 				const float v1 = fabs(DotProduct(vc, normal));
 				
 				if (v1 > v0) {
-					std::cout << std::format("v1 ({}): [{}, {}, {}]\n", v1, a, j, i);
+					//std::cout << std::format("v1 ({}): [{}, {}, {}]\n", v1, a, j, i);
 
 
 					v0 = v1;
@@ -424,12 +423,12 @@ void CM_AddColinearExteriorPointToWindingProjected(winding_t* w, const float* pt
 {
 	//unsure about this but it's 1:1 to the IDA pseudocode so :shrug:
 
-	if (w->p[index0][i] == w->p[index1][i]) {
-		if (w->p[index0][j] == w->p[index1][j]) {
-			Com_Printf(CON_CHANNEL_OBITUARY, "w->p[index0][i] != w->p[index1][i] || w->p[index0][j] != w->p[index1][j]\n");
+	//if (w->p[index0][i] == w->p[index1][i]) {
+	//	if (w->p[index0][j] == w->p[index1][j]) {
+	//		Com_Printf(CON_CHANNEL_OBITUARY, "w->p[index0][i] != w->p[index1][i] || w->p[index0][j] != w->p[index1][j]\n");
 
-		}
-	}
+	//	}
+	//}
 	int axis = j;
 	float delta = w->p[index1][j] - w->p[index0][j];
 
@@ -439,9 +438,9 @@ void CM_AddColinearExteriorPointToWindingProjected(winding_t* w, const float* pt
 	}
 
 	if (delta > 0.f) {
-		if (w->p[index1][axis] <= w->p[index0][axis]) {
-			Com_Printf(CON_CHANNEL_OBITUARY, "w->p[index0][axis] > w->p[index1][axis]\n");
-		}
+		//if (w->p[index1][axis] <= w->p[index0][axis]) {
+		//	Com_Printf(CON_CHANNEL_OBITUARY, "w->p[index0][axis] > w->p[index1][axis]\n");
+		//}
 
 		if (w->p[index0][axis] <= pt[axis]){
 			if (pt[axis] > w->p[index1][axis]){
@@ -458,9 +457,9 @@ void CM_AddColinearExteriorPointToWindingProjected(winding_t* w, const float* pt
 		return;
 	}
 
-	if (w->p[index0][axis] <= w->p[index1][axis]) {
-		Com_Printf(CON_CHANNEL_OBITUARY, "w->p[index0][axis] < w->p[index1][axis]\n");
-	}
+	//if (w->p[index0][axis] <= w->p[index1][axis]) {
+	//	Com_Printf(CON_CHANNEL_OBITUARY, "w->p[index0][axis] < w->p[index1][axis]\n");
+	//}
 
 	
 
@@ -471,7 +470,7 @@ void CM_AddColinearExteriorPointToWindingProjected(winding_t* w, const float* pt
 		}
 		VectorCopy(pt, w->p[index1]);
 
-		Com_Printf(CON_CHANNEL_OBITUARY, "ouch!\n");
+	//	Com_Printf(CON_CHANNEL_OBITUARY, "ouch!\n");
 
 	}
 	else{
@@ -483,13 +482,13 @@ void CM_AddColinearExteriorPointToWindingProjected(winding_t* w, const float* pt
 
 
 }
-bool CM_BuildBrushWindingForSide(winding_t* winding, float* planeNormal, int sideIndex, const ShowCollisionBrushPt* pts, int ptCount)
+bool CM_BuildBrushWindingForSide(winding_t* winding, float* planeNormal, int sideIndex, const std::vector<ShowCollisionBrushPt>& pts, int ptCount)
 {
 	float points[1024][3]{};
 
 	int numWindings = CM_GetXyzList(sideIndex, pts, ptCount, points, ptCount);
 	int i1, i2, i3;
-	//std::cout << "numWindings: " << numWindings << '\n';
+	////std::cout << "numWindings: " << numWindings << '\n';
 
 	if (numWindings < 3)
 		return 0;
@@ -527,11 +526,25 @@ bool CM_BuildBrushWindingForSide(winding_t* winding, float* planeNormal, int sid
 	if (DotProduct(plane, planeNormal) > 0.f) {
 		CM_ReverseWinding(winding);
 	}
-	brushWindings.push_back(*winding);
+
+	winding2_t w;
+
+	w.hasBounce = (planeNormal[2] >= 0.3f && planeNormal[2] <= 0.7f);
+	w.numpoints = winding->numpoints;
+	
+	for(int i = 0; i < 8; i++)
+		for (int j = 0; j < 3; j++)
+			w.p[i][j] = winding->p[i][j];
+
+	brushWindings.push_back(std::move(w));
+
+	//if (planeNormal[2] >= 0.3f && planeNormal[2] <= 0.7f)
+	//	Com_Printf(CON_CHANNEL_OBITUARY, "^2bounce!\n");
+
 	//for (auto i = 0; i < winding->numpoints; i++) {
 		//brushPoints_l.push_back({ winding->p[0][i1], winding->p[0][i2] , winding->p[0][i3] });
 
-		Com_Printf(CON_CHANNEL_OBITUARY, "adding (%i) numpoints!\n", winding->numpoints);
+		//Com_Printf(CON_CHANNEL_OBITUARY, "adding (%i) numpoints!\n", winding->numpoints);
 
 	//}
 	return 1;
@@ -549,7 +562,7 @@ bool VecNCompareCustomEpsilon(const float* v0, const float* v1, float epsilon, i
 	return true;
 }
 
-int CM_GetXyzList(int sideIndex, const ShowCollisionBrushPt* pts, int ptCount, float(*xyz)[3], int xyzLimit)
+int CM_GetXyzList(int sideIndex, const std::vector<ShowCollisionBrushPt>& pts, int ptCount, float(*xyz)[3], int xyzLimit)
 {
 
 	const auto CM_PointInList = [](const float* point, float(*xyzList)[3], int xyzCount) -> bool {
@@ -583,9 +596,9 @@ int CM_GetXyzList(int sideIndex, const ShowCollisionBrushPt* pts, int ptCount, f
 
 			VectorCopy(pts[i].xyz, xyz[windingPoints]);
 
-			//std::cout << "xyz[" << windingPoints << "][0]: " << xyz[windingPoints][0] << '\n';
-			//std::cout << "xyz[" << windingPoints << "][1]: " << xyz[windingPoints][1] << '\n';
-			//std::cout << "xyz[" << windingPoints << "][2]: " << xyz[windingPoints][2] << '\n';
+			////std::cout << "xyz[" << windingPoints << "][0]: " << xyz[windingPoints][0] << '\n';
+			////std::cout << "xyz[" << windingPoints << "][1]: " << xyz[windingPoints][1] << '\n';
+			////std::cout << "xyz[" << windingPoints << "][2]: " << xyz[windingPoints][2] << '\n';
 
 			++windingPoints;
 		}
@@ -615,9 +628,11 @@ void CM_PickProjectionAxes(const float* normal, int* i, int* j)
 
 void CM_GetPolys(cbrush_t* brush)
 {
+	if (!brush)
+		return;
+
 	float axialPlanes[24];
-	winding_t winding = {};
-	ShowCollisionBrushPt pts[124];
+	std::vector<ShowCollisionBrushPt> pts;
 	int numColPoints = 0;
 
 	CM_BuildAxialPlanes((float(*)[6][4])axialPlanes, brush);
@@ -654,4 +669,94 @@ void CM_GetPolys(cbrush_t* brush)
 		++side;
 		++curSide;
 	} while (side < brush->numsides + 6);
+}
+
+void RB_RenderWinding(const winding2_t* w)
+{
+	std::vector<fvec3> tris;
+
+	int points = std::clamp(w->numpoints, 0, 8);
+
+	const auto only_bounces = find_evar<bool>("Only Bounces");
+
+
+	if (w->hasBounce == false && only_bounces->get() || Distance(clients->cgameOrigin, w->p[0]) > 2000)
+		return;
+
+	bool show_all = GetAsyncKeyState(VK_NUMPAD6) & 1;
+
+	//uint8_t c[4];
+
+	//R_ConvertColorToBytes(vec4_t{ 1,0,0,0.7 }, c);
+
+	//for (int i = 0; i < points-3; i+=3) {
+
+	//	tris.clear();
+	//	tris.push_back({ w->p[i][0], w->p[i][1], w->p[i][2] });
+	//	tris.push_back({ w->p[i+1][0], w->p[i+1][1], w->p[i+1][2] });
+	//	tris.push_back({ w->p[i+2][0], w->p[i+2][1], w->p[i+2][2] });
+
+	//	//std::cout << "tris.size():" << tris.size() << '\n';
+
+	//	if (show_all) {
+	//		std::cout << "tris[0]: {" << tris[0].x << ", " << tris[0].y << ", " << tris[0].z << "}\n";
+	//		std::cout << "tris[1]: {" << tris[1].x << ", " << tris[1].y << ", " << tris[1].z << "}\n";
+	//		std::cout << "tris[2]: {" << tris[2].x << ", " << tris[2].y << ", " << tris[2].z << "}\n";
+
+	//	}
+
+	//	RB_DrawPolyInteriors(3, tris, c, true, true, show_all);
+	//	break;
+	//	//RB_DrawTriangleOutline(tris, vec4_t{ 1,0,0,1 }, 3, false);
+
+	//}
+	GfxPointVertex verts[4]{};
+	const auto depthtest = find_evar<bool>("Depth Test");
+
+	for (int i = 0; i < points-1; i++) {
+
+
+		RB_AddDebugLine(verts, depthtest->get(), w->p[i], (float*)w->p[i + 1], vec4_t{1.f,0.f,0.f,1.f}, 0);
+		RB_DrawLines3D(1, 3, verts, depthtest->get());
+
+	}
+
+}
+
+void CM_FindRandomBrushByName()
+{
+	static bool show_all_triggers = false;
+
+	if (cmd_args->argc[cmd_args->nesting] != 2) {
+		if (!show_all_triggers)
+			Com_Printf(CON_CHANNEL_CONSOLEONLY, "usage: showbrush <material>");
+		show_all_triggers = false;
+
+		return;
+	}
+	auto name = *(cmd_args->argv[cmd_args->nesting] + 1);
+	show_all_triggers = true;
+
+
+	int idx = int(random(cm->numBrushes));
+	while (!&cm->brushes[idx] ||
+		std::string(cm->materials[cm->brushes[idx].axialMaterialNum[0][0]].material).find(name) == std::string::npos) {
+		idx = int(random(cm->numBrushes));
+	}
+
+	brushWindings.clear();
+	
+
+
+	for (int i = 0; i < cm->numBrushes; i++) {
+
+		if (std::string(cm->materials[cm->brushes[i].axialMaterialNum[0][0]].material).find(name) == std::string::npos)
+			continue;
+			
+
+		CM_GetPolys(&cm->brushes[i]);
+	}
+	
+
+	//VectorCopy(cm->brushes[idx].maxs, ps_loc->origin);
 }

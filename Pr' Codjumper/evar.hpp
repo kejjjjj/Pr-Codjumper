@@ -73,8 +73,11 @@ public:
     }
 
     template<typename T>
-    void add_array(const std::string& name, const T* array, const size_t size) {
+    decltype(auto) [[maybe_unused]] add_array(const std::string& name, const T* array, const size_t size) {
         variables.push_back(std::make_unique<Evar<T>>(name, array, size));
+
+        return variables.back().get();
+
     }
 
     template<typename T>

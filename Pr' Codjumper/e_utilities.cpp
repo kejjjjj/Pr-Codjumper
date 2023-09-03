@@ -81,6 +81,19 @@ void IN_ActivateMouse(bool active)
 
 
 }
+void IN_ActivateKeyboard(bool active)
+{
+	if (active) {
+
+		hook::write_addr(0x4631B0, "\x51", 1);
+		hook::write_addr(0x467EB0, "\x8B", 1); //CL_KeyEvent
+		
+		return;
+	}
+
+	hook::write_addr(0x4631B0, "\xC3", 1);
+	hook::write_addr(0x467EB0, "\xC3", 1);
+}
 void UI_SetSystemCursorPos(float x, float y)
 {
     __asm

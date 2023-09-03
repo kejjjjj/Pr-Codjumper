@@ -2086,7 +2086,7 @@ struct __declspec(align(4)) ShowCollisionBrushPt
 struct winding_t
 {
 	int numpoints;
-	float p[4][3];
+	float p[8][3];
 };
 
 struct GfxPackedVertex

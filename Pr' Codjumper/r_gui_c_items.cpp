@@ -1,7 +1,7 @@
 
 #include "pch.hpp"
 
-Gui_Item::Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::shared_ptr<_slider>> sliderData, bool isCheckbox)
+Gui_Item::Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::function<void(bool)>> onClicked, std::optional<std::shared_ptr<_slider>> sliderData, bool isCheckbox, bool isInputbox)
 {
 	if (!ref) {
 		FatalError("Gui_Item(): invalid ref variable");
@@ -11,6 +11,9 @@ Gui_Item::Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::share
 	linked_variable = ref;
 	checkbox = isCheckbox;
 	tooltip = _tooltip;
+	inputbox = isInputbox;
+	if(onClicked.has_value())
+		activation_event = onClicked.value();
 
 	if (sliderData.has_value()) {
 		slider = sliderData.value();
@@ -19,6 +22,10 @@ Gui_Item::Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::share
 
 	if (checkbox && ref->is_array()) {
 		FatalError("Gui_Item(): checkbox and array at the same time");
+		return;
+	}
+	if (inputbox && !ref->is_array()) {
+		FatalError("Gui_Item(): inputbox and not array");
 		return;
 	}
 
@@ -30,9 +37,16 @@ void Gui_Item::render()
 {
 	if (checkbox) {
 		auto o = linked_variable->get_raw();
-		ImGui::Checkbox2(linked_variable->get_name().c_str(), (bool*)o);
+		if (ImGui::Checkbox2(linked_variable->get_name().c_str(), (bool*)o) && activation_event)
+			activation_event(*(bool*)o);
 		//ImGui::SameLine();
 		ImGui::Tooltip(tooltip);
+	}
+	else if (inputbox) {
+		ImGui::SetNextItemWidth(100);
+		if (ImGui::InputText(linked_variable->get_name().c_str(), (char*)linked_variable->get_raw(), 128) && activation_event)
+			activation_event(true);
+
 	}
 
 	
