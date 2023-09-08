@@ -50,7 +50,7 @@ void Gui::render()
 		return;
 
 	if (GetAsyncKeyState(VK_ESCAPE) & 1)
-		close();
+		return close();
 
 	ImGui::Begin("cj", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar/*ImGuiWindowFlags_AlwaysAutoResize*/);
 

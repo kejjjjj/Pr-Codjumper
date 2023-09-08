@@ -117,6 +117,7 @@ typedef vec_t vec4_t[4];
 #include "cg_angles.hpp"
 
 #include "bg_pmove.hpp"
+#include "bg_pmove_simulation.hpp"
 
 #include "cl_mouse.hpp"
 

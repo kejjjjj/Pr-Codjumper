@@ -1489,8 +1489,8 @@ struct pmove_t
 	float viewChange;
 	char handler;
 };
-inline pmove_t pm_glob;
-inline pml_t pml_glob;
+inline pmove_t* pm_glob;
+inline pml_t* pml_glob;
 enum MapType
 {
 	MAPTYPE_NONE = 0x0,

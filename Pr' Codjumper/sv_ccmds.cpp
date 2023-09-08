@@ -12,6 +12,8 @@ void CL_Disconnect()
 
 
 	}
+	delete pm_glob;
+	delete pml_glob;
 
 	detour_func.cast_call<void(*)()>();
 }
@@ -40,6 +42,10 @@ void SV_Map(void* a1)
 		//	Com_PrintError(CON_CHANNEL_CONSOLEONLY, "failed to [%s] because '%s' is missing\n", *(sv_cmd_args->argv[sv_cmd_args->nesting] + 0), *(sv_cmd_args->argv[sv_cmd_args->nesting] + 1));
 		//	return;
 		//}
+
+		pm_glob = new pmove_t;
+		pml_glob = new pml_t;
+
 		CreateCommands_f();
 		dvar_s* sv_punkbuster = Dvar_FindMalleableVar("sv_punkbuster");
 		dvar_s* cl_punkbuster = Dvar_FindMalleableVar("cl_punkbuster");

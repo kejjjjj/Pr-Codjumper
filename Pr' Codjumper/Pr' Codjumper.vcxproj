@@ -150,6 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="bg_pmove.hpp" />
+    <ClInclude Include="bg_pmove_simulation.hpp" />
     <ClInclude Include="cg_angles.hpp" />
     <ClInclude Include="cg_hooks.hpp" />
     <ClInclude Include="cg_init.hpp" />
@@ -209,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bg_pmove.cpp" />
+    <ClCompile Include="bg_pmove_simulation.cpp" />
     <ClCompile Include="cg_angles.cpp" />
     <ClCompile Include="cg_hooks.cpp" />
     <ClCompile Include="cg_init.cpp" />

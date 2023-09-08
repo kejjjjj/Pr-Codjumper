@@ -9,9 +9,6 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_ENDSCENE);
 	static Gui& gui = Gui::getInstance();
 
-	if (GetAsyncKeyState(VK_NUMPAD0) & 1)
-		IN_ActivateMouse(!cg::s_wmv->mouseActive);
-
 	if (!ImGui::GetCurrentContext()) {
 		renderer.initialize();
 		std::cout << "create imgui\n";
@@ -192,9 +189,12 @@ void __cdecl Renderer::CG_DrawActive()
 {
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_DRAWACTIVE);
 
+	if (!T::Movement::T_Ready())
+		return detour_func.cast_call<void(__cdecl*)()>();
+
 	char buffer[128];
 
-	sprintf_s(buffer, "x:     %.6f\ny:     %.6f\nz:     %.6f\nyaw: %.6f", clients->cgameOrigin[0], clients->cgameOrigin[1], clients->cgameOrigin[2], clients->cgameViewangles[YAW]);
+	sprintf_s(buffer, "x:     %.6f\ny:     %.6f\nz:     %.6f\nyaw: %.6f", clients->cgameOrigin[0], clients->cgameOrigin[1], clients->cgameOrigin[2], AngleNormalize90(clients->cgameViewangles[YAW]));
 
 	float col[4] = { 0,1,0,1 };
 	float glowCol[4] = { 0,0,0,0 };
@@ -206,6 +206,14 @@ void __cdecl Renderer::CG_DrawActive()
 
 	R_AddCmdDrawTextWithEffects(buffer, "fonts/objectivefont", cgs->refdef.width/2.f-15.f, cgs->refdef.height/2.f-15.f, 1.3f, 1.3f, 0.f, vec4_t{ 0,1,0,1 }, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
 
+
+	int fps = T::Movement::T_GetIdealFPS(pm_glob, pml_glob);
+
+	Dvar_FindMalleableVar("com_maxfps")->current.integer = fps;
+
+	sprintf_s(buffer, "%i", fps);
+	R_AddCmdDrawTextWithEffects(buffer, "fonts/normalfont", cgs->refdef.width / 2.f - 15.f, 100.f, 2.f, 2.f, 0.f, col, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
+	
 
 	return detour_func.cast_call<void (__cdecl*)()>();
 }

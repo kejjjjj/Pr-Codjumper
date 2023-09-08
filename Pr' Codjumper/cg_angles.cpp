@@ -1,4 +1,79 @@
 #include "pch.hpp"
+void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
+{
+	float angle;
+	static float sr, sp, sy, cr, cp, cy;
+	// static to help MS compiler fp bugs
+
+	angle = angles[YAW] * (M_PI * 2 / 360);
+	sy = sin(angle);
+	cy = cos(angle);
+
+	angle = angles[PITCH] * (M_PI * 2 / 360);
+	sp = sin(angle);
+	cp = cos(angle);
+
+	angle = angles[ROLL] * (M_PI * 2 / 360);
+	sr = sin(angle);
+	cr = cos(angle);
+
+	if (forward) {
+		forward[0] = cp * cy;
+		forward[1] = cp * sy;
+		forward[2] = -sp;
+	}
+	if (right) {
+		right[0] = (-1 * sr * sp * cy + -1 * cr * -sy);
+		right[1] = (-1 * sr * sp * sy + -1 * cr * cy);
+		right[2] = -1 * sr * cp;
+	}
+	if (up) {
+		up[0] = (cr * sp * cy + -sr * -sy);
+		up[1] = (cr * sp * sy + -sr * cy);
+		up[2] = cr * cp;
+	}
+}
+float ProjectionX(float angle, float fov)
+{
+	float SCREEN_WIDTH = cgs->refdef.width;
+	float const half_fov_x = DEG2RAD(fov) / 2;
+	if (angle >= half_fov_x)
+	{
+		return 0;
+	}
+	if (angle <= -half_fov_x)
+	{
+		return SCREEN_WIDTH;
+	}
+
+	return SCREEN_WIDTH / 2 * (1 - angle / half_fov_x);
+
+}
+range_t AnglesToRange(float start, float end, float yaw, float fov)
+{
+	start = DEG2RAD(start);
+	end = DEG2RAD(end);
+	yaw = DEG2RAD(yaw);
+
+	if (fabsf(end - start) > 2 * (float)M_PI)
+	{
+		return std::move(range_t{ 0, float(cgs->refdef.width), false });
+	}
+
+	bool split = end > start;
+	start = AngleNormalizePI(start - yaw);
+	end = AngleNormalizePI(end - yaw);
+
+
+	if (end > start)
+	{
+		split = !split;
+		std::swap(start, end);
+	}
+
+	return std::move(range_t{ ProjectionX(start, fov), ProjectionX(end, fov), split });
+
+}
 
 float AngleNormalizePI(float angle)
 {
@@ -15,7 +90,11 @@ float AngleNormalize180(float angle) {
 	}
 	return angle;
 }
+float AngleNormalize90(float angle)
+{
+	return fmodf(angle + 180 + 90, 180) - 90;
 
+}
 float AngleDelta(float angle1, float angle2) {
 	return AngleNormalize180(angle1 - angle2);
 }

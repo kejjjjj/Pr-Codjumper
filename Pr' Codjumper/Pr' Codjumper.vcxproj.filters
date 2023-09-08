@@ -255,6 +255,9 @@
     <ClInclude Include="rb_endscene.hpp">
       <Filter>Source Files\rb</Filter>
     </ClInclude>
+    <ClInclude Include="bg_pmove_simulation.hpp">
+      <Filter>Source Files\bg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -421,6 +424,9 @@
     </ClCompile>
     <ClCompile Include="r_gui_geometry.cpp">
       <Filter>Source Files\render\gui\features</Filter>
+    </ClCompile>
+    <ClCompile Include="bg_pmove_simulation.cpp">
+      <Filter>Source Files\bg</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

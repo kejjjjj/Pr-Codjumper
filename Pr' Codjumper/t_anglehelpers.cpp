@@ -25,10 +25,10 @@ void T::Visuals::T_RenderAssistBall()
 
 	fvec3 angles(clients->cgameViewangles);
 
-	if (op = CG_GetOptYawDelta(&pm_glob, &pml_glob), !op)
+	if (op = CG_GetOptYawDelta(pm_glob, pml_glob), !op)
 		return;
 
-	angles.y = pm_glob.ps->viewangles[YAW] - op.value();
+	angles.y = pm_glob->ps->viewangles[YAW] - op.value();
 
 	fwd = fwd + fvec3(angles).toforward() * 500;
 

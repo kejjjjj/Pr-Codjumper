@@ -13,8 +13,8 @@ void PM_AirMove(pmove_t* pm, pml_t* pml)
 {
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_PM_AIRMOVE);
 
-	memcpy(&pm_glob, pm, sizeof(pmove_t));
-	memcpy(&pml_glob, pml, sizeof(pml_t));
+	memcpy(pm_glob, pm, sizeof(pmove_t));
+	memcpy(pml_glob, pml, sizeof(pml_t));
 
 	T::Movement::T_Strafebot(pm, pml);
 
@@ -22,8 +22,8 @@ void PM_AirMove(pmove_t* pm, pml_t* pml)
 }
 void PM_WalkMove(pmove_t* pm, pml_t* pml)
 {
-	memcpy(&pm_glob,pm, sizeof(pmove_t));
-	memcpy(&pml_glob, pml, sizeof(pml_t));
+	memcpy(pm_glob, pm, sizeof(pmove_t));
+	memcpy(pml_glob, pml, sizeof(pml_t));
 
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_PM_WALKMOVE);
 
@@ -141,6 +141,7 @@ void WTF(playerState_s* ps, float msec, usercmd_s* cmd, char handler)
 	float oldCmdYaw = cmd->angles[YAW];
 	float oldDeltaYaw = ps->delta_angles[YAW];
 
+
 	//if (PM_DisallowMouse())
 	//	return;
 
@@ -205,10 +206,12 @@ void WTF(playerState_s* ps, float msec, usercmd_s* cmd, char handler)
 
 	}
 
+
 	if (PM_DisallowMouse()) {
 		ps->viewangles[YAW] = oldYaw;
-		ps->delta_angles[YAW] = oldDeltaYaw;
-		cmd->angles[YAW] = oldCmdYaw;
+		//ps->delta_angles[YAW] = oldDeltaYaw;
+		//cmd->angles[YAW] = oldCmdYaw;
+		return;
 	}
 
 
@@ -246,4 +249,31 @@ __declspec(naked) void PM_UpdateViewAngles(playerState_s* ps, float msec, usercm
 
 		retn;
 	}
+}
+void Sys_SnapVector(float* v)
+{
+	int i;
+	float f;
+
+	f = *v;
+	__asm	fld		f;
+	__asm	fistp	i;
+	*v = i;
+	v++;
+	f = *v;
+	__asm	fld		f;
+	__asm	fistp	i;
+	*v = i;
+	v++;
+	f = *v;
+	__asm	fld		f;
+	__asm	fistp	i;
+	*v = i;
+	/*
+	*v = fastftol(*v);
+	v++;
+	*v = fastftol(*v);
+	v++;
+	*v = fastftol(*v);
+	*/
 }
