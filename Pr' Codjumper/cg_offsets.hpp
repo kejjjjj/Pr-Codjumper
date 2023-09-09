@@ -19,6 +19,7 @@ namespace cg
 	inline r_global_permanent_t* rgp = reinterpret_cast<r_global_permanent_t*>(0xCC98280);
 	inline pmoveHandler_t* pmoveHandlers = reinterpret_cast<pmoveHandler_t*>(0x729448);
 	inline CmdArgs* cmd_args = reinterpret_cast<CmdArgs*>(0x1410B40);
+	inline DpvsGlob* dpvsGlob = reinterpret_cast<DpvsGlob*>(0xD065368);
 
 	inline DirInput* input = reinterpret_cast<DirInput*>(0x8C9CAA);
 	inline CInput* cinput = reinterpret_cast<CInput*>(0xcc4ff8);

@@ -7398,6 +7398,7 @@ struct GfxSceneDpvs
 	GfxEntCellRefInfo* entInfo[4];
 };
 
+
 #pragma warning( push )
 #pragma warning( disable : 4324 )
 struct __declspec(align(64)) GfxScene
@@ -7656,7 +7657,46 @@ struct __declspec(align(128)) r_global_permanent_t
 	int savedScreenTimes[4];
 };
 #pragma warning( pop )
+struct DpvsView
+{
+	unsigned int renderFxFlagsCull;
+	DpvsPlane frustumPlanes[14];
+	int frustumPlaneCount;
+};
+struct PortalHeapNode
+{
+	GfxPortal* portal;
+	float dist;
+};
+union GfxHullPointsPool
+{
+	GfxHullPointsPool* nextFree;
+	float points[64][2];
+};
 
+struct DpvsGlob
+{
+	DpvsPlane viewPlane;
+	DpvsPlane fogPlane;
+	DpvsPlane* nearPlane;
+	DpvsPlane* farPlane;
+	GfxMatrix* viewProjMtx;
+	GfxMatrix* invViewProjMtx;
+	float viewOrg[4];
+	int viewOrgIsDir;
+	int queuedCount;
+	PortalHeapNode* portalQueue;
+	GfxHullPointsPool* nextFreeHullPoints;
+	float cullDist;
+	DpvsPlane childPlanes[2048];
+	DpvsView views[3];
+	unsigned int cameraCellIndex;
+	DpvsPlane* sideFrustumPlanes;
+	unsigned int* entVisBits[4];
+	GfxEntCellRefInfo* entInfo[4];
+	unsigned int* cellBits;
+	unsigned int cellVisibleBits[32];
+};
 struct Image_MemUsage
 {
 	int total;

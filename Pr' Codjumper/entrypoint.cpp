@@ -19,8 +19,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
                 FILE* _con = 0;
 
-                AllocConsole();
-                freopen_s(&_con, "CONOUT$", "w", stdout);
+                //AllocConsole();
+                //freopen_s(&_con, "CONOUT$", "w", stdout);
 
                 puts("hello, world!");
 

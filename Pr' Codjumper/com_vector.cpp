@@ -81,3 +81,89 @@ float random(const float min, const float range) { //LO -> HI
 	std::uniform_real_distribution num{ min, range };
 	return num(mt);
 }
+int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, cplane_s* p) {
+	float dist1, dist2;
+
+	switch (p->signbits)
+	{
+	case 0:
+		dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
+		dist2 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
+		break;
+	case 1:
+		dist1 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
+		dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
+		break;
+	case 2:
+		dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
+		dist2 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
+		break;
+	case 3:
+		dist1 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
+		dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
+		break;
+	case 4:
+		dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
+		dist2 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
+		break;
+	case 5:
+		dist1 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
+		dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
+		break;
+	case 6:
+		dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
+		dist2 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
+		break;
+	case 7:
+		dist1 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
+		dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
+		break;
+	default:
+		dist1 = dist2 = 0;      // shut up compiler
+		break;
+	}
+
+	return (2 * (dist2 < p->dist)) | (dist1 > p->dist);
+}
+
+void BuildFrustumPlanes(const GfxViewParms* viewParms, cplane_s* frustumPlanes)
+{
+
+	for (int i = 0; i < 5; i++) {
+
+		cplane_s* plane = &frustumPlanes[i];
+		auto dpvs = &dpvsGlob->views[0].frustumPlanes[i];
+
+		VectorCopy(dpvs->coeffs, plane->normal);
+		plane->dist = dpvs->coeffs[3] * -1;
+
+		char signbit = 0;
+
+		if (plane->normal[0] != 1.f) {
+			if (plane->normal[1] == 1.f)
+				signbit = 1;
+			else {
+				signbit = plane->normal[2] == 1.f ? 2 : 3;
+			}
+		}
+		
+		plane->type = signbit;
+
+		SetPlaneSignbits(plane);
+
+	}
+}
+
+void SetPlaneSignbits(cplane_s* out)
+{
+	int bits, j;
+
+	// for fast box on planeside test
+	bits = 0;
+	for (j = 0; j < 3; j++) {
+		if (out->normal[j] < 0) {
+			bits |= 1 << j;
+		}
+	}
+	out->signbits = bits;
+}

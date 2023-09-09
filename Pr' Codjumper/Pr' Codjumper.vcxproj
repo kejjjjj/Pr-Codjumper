@@ -158,6 +158,7 @@
     <ClInclude Include="cg_offsets.hpp" />
     <ClInclude Include="cl_mouse.hpp" />
     <ClInclude Include="cm_brush.hpp" />
+    <ClInclude Include="cm_terrain.hpp" />
     <ClInclude Include="commands.hpp" />
     <ClInclude Include="com_channel.hpp" />
     <ClInclude Include="com_vector.hpp" />
@@ -216,6 +217,7 @@
     <ClCompile Include="cg_init.cpp" />
     <ClCompile Include="cl_mouse.cpp" />
     <ClCompile Include="cm_brush.cpp" />
+    <ClCompile Include="cm_terrain.cpp" />
     <ClCompile Include="commands.cpp" />
     <ClCompile Include="com_channel.cpp" />
     <ClCompile Include="com_vector.cpp" />

@@ -14,6 +14,10 @@ vec_t VectorNormalize2(const vec3_t v, vec3_t out);
 void VectorInverse(vec3_t v);
 
 void MatrixTransformVector43(const float* in1, const float(*in2)[3], float* out);
+int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, struct cplane_s* p);
 
+void BuildFrustumPlanes(const struct GfxViewParms* viewParms, cplane_s* frustumPlanes);
 float random(const float range); //0 -> HI
 float random(const float min, const float range); //LO -> HI
+
+void SetPlaneSignbits(cplane_s* out);

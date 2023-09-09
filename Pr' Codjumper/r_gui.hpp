@@ -29,9 +29,12 @@ private:
 
 	void automation_create_hardcoded();
 	void automation_create_movement(Gui_SubCategory& category);
+	void automation_create_fps(Gui_SubCategory& category);
 
 	void geometry_create_hardcoded();
 	void geometry_create_clipmap(Gui_SubCategory& category);
+	void geometry_create_terrain(Gui_SubCategory& category);
+	void geometry_create_preferences(Gui_SubCategory& category);
 
 	void render_topbar();
 	void clip_bounds();

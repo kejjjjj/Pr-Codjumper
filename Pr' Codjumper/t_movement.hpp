@@ -11,6 +11,8 @@ namespace T::Movement
 	void T_Strafebot(pmove_t* pm, pml_t* pml);
 	int32_t T_GetIdealFPS(pmove_t* pm, pml_t* pml);
 
-	inline bool T_Ready() noexcept { return pm_glob && pml_glob && pm_glob->ps; }
+	void T_AutoFPS(pmove_t* pm, pml_t* pml);
+
+	inline bool T_Ready() noexcept { return pm_glob && pml_glob && pm_glob->ps && !NOT_SERVER; }
 
 }

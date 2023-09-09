@@ -41,6 +41,27 @@ void T::Movement::T_Strafebot(pmove_t* pm, pml_t* pml)
 
 	
 }
+void T::Movement::T_AutoFPS(pmove_t* pm, pml_t* pml)
+{
+
+	auto var = find_evar<bool>("AutoFPS");
+
+	if (!var->get())
+		return;
+	
+	playerState_s* ps = pm->ps;
+
+	static dvar_s* com_maxfps = Dvar_FindMalleableVar("com_maxfps");
+
+	if (ps->groundEntityNum == 1022) {
+		com_maxfps->current.integer = 125;
+		return;
+	}
+
+	com_maxfps->current.integer = T_GetIdealFPS(pm, pml);
+
+
+}
 
 enum fps_enum
 {
@@ -57,7 +78,7 @@ struct fps_zone
 };
 void swapForAxis(fps_zone& zone)
 {
-	if (AngularDistance(zone.end, 0) > 45 && AngularDistance(zone.start, 0) > 45) {
+	if (AngularDistance(zone.end, 0) > 50 && AngularDistance(zone.start, 0) > 45) {
 		zone.start = -AngularDistance(zone.start, 90);
 		zone.end = AngularDistance(zone.end, -90);
 		return;
@@ -65,7 +86,7 @@ void swapForAxis(fps_zone& zone)
 	}
 	else if (AngularDistance(zone.end, 0) > 45) {
 		zone.start = AngularDistance(zone.start, -90);
-		zone.end = AngularDistance(zone.end, 90);
+		zone.end = AngularDistance(zone.end, -90);
 		return;
 	}
 
@@ -76,13 +97,65 @@ void swapForAxis(fps_zone& zone)
 
 	return;
 }
+void get_zones(int g_speed, std::vector<fps_zone>& zone)
+{
+	std::vector<int> fps;
+	zone.clear();
 
+	//note: g_speed will mess these hardcoded values up!
+	fps.push_back(333);
+	fps.push_back(250);
+	fps.push_back(200);
+	fps.push_back(125);
+	//fps.push_back(111);
+	//fps.push_back(100);
+
+
+	//use this if you need g_speed
+
+	//for (int i = 2; i < 5; i++) {
+
+	//	float v = std::round(float(g_speed) / (1000.f / i));
+	//	if (v == 0.f)
+	//		continue;
+
+	//	if (fps.empty() == false)
+	//		if (fps.back() == 1000 / i)
+	//			continue;
+
+	//	fps.push_back(1000 / i);
+
+
+
+	//}
+
+	zone.resize(fps.size());
+	zone[0].start = (std::round(g_speed / (1000 / fps[0])));
+	zone[0].end = -zone[0].start;
+	zone[0].FPS = fps[0];
+
+	zone[0].start = int(zone[0].start);
+	zone[0].end = int(zone[0].end);
+
+	for (int i = 1; i < fps.size(); i++) {
+
+		zone[i].start = zone[i - 1].end;
+		zone[i].end = zone[i].start * float(1000 / fps[i - 1]) / float(1000 / fps[i]);
+
+		zone[i].start = int(zone[i].start);
+		zone[i].end = int(zone[i].end);
+		zone[i].FPS = fps[i];
+
+	}
+
+	return;
+}
 int32_t T::Movement::T_GetIdealFPS(pmove_t* pm, pml_t* pml)
 {
-	float screen_center = float(cgs->refdef.width / 2);
-	const auto in_range = [&screen_center, &pm](float yaw, float min, float max, bool info) -> bool {
-		
-		float aa = RAD2DEG(atan2(-(int)pm->cmd.rightmove, (int)pm->cmd.forwardmove));
+	const auto in_range = [&pm](float yaw, float min, float max, bool info) -> bool {
+		const float screen_center = float(cgs->refdef.width / 2);
+
+		const float aa = RAD2DEG(atan2(-(int)pm->cmd.rightmove, (int)pm->cmd.forwardmove));
 		yaw = AngleNormalize90(yaw + aa);
 		const float fov = Dvar_FindMalleableVar("cg_fov")->current.value * Dvar_FindMalleableVar("cg_fovscale")->current.value;
 
@@ -90,62 +163,30 @@ int32_t T::Movement::T_GetIdealFPS(pmove_t* pm, pml_t* pml)
 
 		return results.x1 <= screen_center && results.x2 >= screen_center;
 	};
-
-	int fps_list[] = { 333, 250, 200, 125, 111 };
-	fps_zone zones[4];
-
-	zones[F333].start = AngularDistance(std::round(pm->ps->speed / (1000 / fps_list[F333])), 0.f);
-	zones[F333].end = -zones[0].start;
-	zones[F333].FPS = 333;
-
-	zones[F250].start = zones[F333].end;
-	zones[F250].end = zones[F333].start * float(1000 / fps_list[F333]) / float(1000 / fps_list[F250]);
-	zones[F250].FPS = 250;
-
-	if (zones[F250].end > 45)
-		zones[F250].end = -AngularDistance(zones[F250].end, 90.f);
-
-	zones[F200].start = zones[F250].end;
-	zones[F200].end = zones[F200].start * float(1000 / fps_list[F250]) / float(1000 / fps_list[F200]);
-	zones[F200].FPS = 200;
-
-	zones[F125].start = zones[F200].end;
-	zones[F125].end = zones[F125].start * float(1000 / fps_list[F200]) / float(1000 / fps_list[F125]);
-	zones[F125].FPS = 125;
-
-	bool pressed = GetAsyncKeyState(VK_NUMPAD8) & 1;
-
-	if (pressed) {
-		for (int zone = 0; zone < 4; zone++) {
-
-			std::cout << zones[zone].FPS << " = (" << zones[zone].start << ", " << zones[zone].end << ") -> ";
-			auto copy = zones[zone];
-
-			swapForAxis(copy);
-
-			std::cout << "(" << copy.start << ", " << copy.end << ")\n";
-
-		}
+	static int g_speed = 0;
+	static std::vector<fps_zone> zones;
+	fps_zone copy;
+	if (g_speed != pm->ps->speed) {
+		get_zones(pm->ps->speed, zones);
+		g_speed = pm->ps->speed;
 	}
 
+	for (int zone = 1; zone < zones.size(); zone++) {
 
-	for (int zone = 1; zone < 4; zone++) {
-
-		zones[zone].start = int(zones[zone].start);
-		zones[zone].end = int(zones[zone].end);
+		copy = zones[zone];
 
 		if (pm->cmd.rightmove == 127) {
-			zones[zone].start *= -1;
-			zones[zone].end *= -1;
+			copy.start *= -1;
+			copy.end *= -1;
 
 		}
 
-		if (in_range(pm->ps->viewangles[YAW], zones[zone].start, zones[zone].end, pressed))
+		if (in_range(pm->ps->viewangles[YAW], copy.start, copy.end, 0))
 			return zones[zone].FPS;
 		
-		swapForAxis(zones[zone]);
+		swapForAxis(copy);
 
-		if (in_range(pm->ps->viewangles[YAW], zones[zone].start, zones[zone].end, pressed))
+		if (in_range(pm->ps->viewangles[YAW], copy.start, copy.end, 0))
 			return zones[zone].FPS;
 
 	}

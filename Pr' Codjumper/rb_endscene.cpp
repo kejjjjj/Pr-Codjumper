@@ -35,6 +35,8 @@ void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* 
 		else
 			material->stateBitsTable->loadBits[0] = 422089061;
 
+		//material->stateBitsTable->loadBits[1] = 44;
+
 		RB_BeginSurface(MaterialTechniqueType::TECHNIQUE_UNLIT, material);
 
 	}
@@ -173,9 +175,8 @@ char RB_DrawDebug(GfxViewParms* viewParms)
 {
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_RB_ENDSCENE);
 
-
-	for (auto& i : brushWindings)
-		RB_RenderWinding(&i);
+	RB_ShowCollision(viewParms);
+	
 
 	return detour_func.cast_call<char(*)(GfxViewParms*)>(viewParms);
 }

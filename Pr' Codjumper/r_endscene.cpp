@@ -197,23 +197,21 @@ void __cdecl Renderer::CG_DrawActive()
 	sprintf_s(buffer, "x:     %.6f\ny:     %.6f\nz:     %.6f\nyaw: %.6f", clients->cgameOrigin[0], clients->cgameOrigin[1], clients->cgameOrigin[2], AngleNormalize90(clients->cgameViewangles[YAW]));
 
 	float col[4] = { 0,1,0,1 };
-	float glowCol[4] = { 0,0,0,0 };
+	float glowCol[4] = { 1,0,0,1 };
 
 
-	R_AddCmdDrawTextWithEffects(buffer, "fonts/normalfont", 10.f, 480.f, 1.3f, 1.3f, 0.f, col, 3, glowCol, nullptr, nullptr, 0,0,0,0);
+	R_AddCmdDrawTextWithEffects(buffer, "fonts/normalfont", 10.f, 480.f, 1.3f, 1.3f, 0.f, vec4_t{ 0,1,0,1 }, 3, vec4_t{0,0,0,0}, nullptr, nullptr, 0, 0, 0, 0);
 
 	sprintf_s(buffer, "%i", (int)fvec2(clients->cgameVelocity).mag());
 
-	R_AddCmdDrawTextWithEffects(buffer, "fonts/objectivefont", cgs->refdef.width/2.f-15.f, cgs->refdef.height/2.f-15.f, 1.3f, 1.3f, 0.f, vec4_t{ 0,1,0,1 }, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
+	R_AddCmdDrawTextWithEffects(buffer, "fonts/objectivefont", cgs->refdef.width/2.f-15.f, cgs->refdef.height/2.f-15.f, 1.3f, 1.3f, 0.f, col, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
 
 
-	int fps = T::Movement::T_GetIdealFPS(pm_glob, pml_glob);
-
-	Dvar_FindMalleableVar("com_maxfps")->current.integer = fps;
-
-	sprintf_s(buffer, "%i", fps);
-	R_AddCmdDrawTextWithEffects(buffer, "fonts/normalfont", cgs->refdef.width / 2.f - 15.f, 100.f, 2.f, 2.f, 0.f, col, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
-	
+	if (find_evar<bool>("AutoFPS")->get()) {
+		int fps = T::Movement::T_GetIdealFPS(pm_glob, pml_glob);
+		sprintf_s(buffer, "%i", fps);
+		R_AddCmdDrawTextWithEffects(buffer, "fonts/objectivefont", cgs->refdef.width / 2.f - 15.f, cgs->refdef.height / 2.f + 30.f, 1.3f, 1.3f, 0.f, vec4_t{ 1,1,0,1 }, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
+	}
 
 	return detour_func.cast_call<void (__cdecl*)()>();
 }

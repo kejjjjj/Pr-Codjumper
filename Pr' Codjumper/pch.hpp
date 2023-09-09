@@ -42,7 +42,7 @@ typedef vec_t vec4_t[4];
 #define SHORT2RAD(a) ((a) * ((float)M_PI / 32768.f))
 #define SHORT2DEG(a) (((a) / 32768.f) * 180.0f)
 
-#define NOT_SERVER *(int*)0x0797520 == 0
+#define NOT_SERVER (*(int*)0x0797520 == 0)
 
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
@@ -93,8 +93,6 @@ typedef vec_t vec4_t[4];
 
 #include "mh/MinHook.h"
 
-#include "com_vector.hpp"
-
 #include "entrypoint.hpp"
 #include "resources.hpp"
 
@@ -142,11 +140,13 @@ typedef vec_t vec4_t[4];
 #include "com_channel.hpp"
 
 #include "cm_brush.hpp"
+#include "cm_terrain.hpp"
 
 #include "geom_shapes.hpp"
 #include "misc_tools.hpp"
 
 #include "ImGui/imgui_color_gradient.hpp"
+#include "com_vector.hpp"
 
 
 using namespace std::chrono_literals;

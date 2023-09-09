@@ -258,6 +258,9 @@
     <ClInclude Include="bg_pmove_simulation.hpp">
       <Filter>Source Files\bg</Filter>
     </ClInclude>
+    <ClInclude Include="cm_terrain.hpp">
+      <Filter>Source Files\cmod</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -427,6 +430,9 @@
     </ClCompile>
     <ClCompile Include="bg_pmove_simulation.cpp">
       <Filter>Source Files\bg</Filter>
+    </ClCompile>
+    <ClCompile Include="cm_terrain.cpp">
+      <Filter>Source Files\cmod</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

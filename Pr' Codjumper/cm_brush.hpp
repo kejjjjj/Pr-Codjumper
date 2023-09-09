@@ -10,7 +10,7 @@ void CM_GetPolys(cbrush_t* brush);
 int CM_ForEachBrushPlaneIntersection(const cbrush_t* brush, const float(*axialPlanes)[4], std::vector<ShowCollisionBrushPt>& brushPts);
 void CM_GetPlaneVec4Form(const cbrushside_t* sides, const float(*axialPlanes)[4], int index, float* expandedPlane);
 int CM_AddSimpleBrushPoint(const cbrush_t* brush, const float(*axialPlanes)[4], const __int16* side_indices, const float* xyz, int pt_count, std::vector<ShowCollisionBrushPt>& brush_pts);
-bool CM_BuildBrushWindingForSide(winding_t* winding, float* planeNormal, int sideIndex, const std::vector<ShowCollisionBrushPt>& pts, int ptCount);
+bool CM_BuildBrushWindingForSide(cbrush_t* brush, winding_t* winding, float* planeNormal, int sideIndex, const std::vector<ShowCollisionBrushPt>& pts, int ptCount);
 void CM_AddExteriorPointToWindingProjected(winding_t* w, const float* pt, int i, int j);
 float CM_RepresentativeTriangleFromWinding(const winding_t* w, const float* normal, int* i0, int* i1, int* i2);
 bool PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
@@ -25,13 +25,15 @@ struct winding2_t
 	int numpoints;
 	float p[8][3];
 	bool hasBounce;
+	cbrush_t* brush;
 };
 
 
 void RB_RenderWinding(const winding2_t* w);
 
 void CM_FindRandomBrushByName();
-
+bool CM_BrushInView(const cbrush_t* brush, struct cplane_s* frustumPlanes, int numPlanes);
+void RB_ShowCollision(GfxViewParms* viewParms);
 
 inline std::list<winding2_t> brushWindings;
 

@@ -482,7 +482,7 @@ void CM_AddColinearExteriorPointToWindingProjected(winding_t* w, const float* pt
 
 
 }
-bool CM_BuildBrushWindingForSide(winding_t* winding, float* planeNormal, int sideIndex, const std::vector<ShowCollisionBrushPt>& pts, int ptCount)
+bool CM_BuildBrushWindingForSide(cbrush_t* brush, winding_t* winding, float* planeNormal, int sideIndex, const std::vector<ShowCollisionBrushPt>& pts, int ptCount)
 {
 	float points[1024][3]{};
 
@@ -531,7 +531,8 @@ bool CM_BuildBrushWindingForSide(winding_t* winding, float* planeNormal, int sid
 
 	w.hasBounce = (planeNormal[2] >= 0.3f && planeNormal[2] <= 0.7f);
 	w.numpoints = winding->numpoints;
-	
+	w.brush = brush;
+
 	for(int i = 0; i < 8; i++)
 		for (int j = 0; j < 3; j++)
 			w.p[i][j] = winding->p[i][j];
@@ -648,7 +649,7 @@ void CM_GetPolys(cbrush_t* brush)
 	//axial faces
 	int side = 0;
 	do {
-		if (CM_BuildBrushWindingForSide(winding_pool, (axialPlanes + side * 4), side, pts, numColPoints)) {
+		if (CM_BuildBrushWindingForSide(brush, winding_pool, (axialPlanes + side * 4), side, pts, numColPoints)) {
 			
 		}
 	} while (++side < 6);
@@ -664,7 +665,7 @@ void CM_GetPolys(cbrush_t* brush)
 	int curSide = 0;
 	do {
 
-		CM_BuildBrushWindingForSide(winding_pool, brush->sides[curSide].plane->normal, side, pts, numColPoints);
+		CM_BuildBrushWindingForSide(brush, winding_pool, brush->sides[curSide].plane->normal, side, pts, numColPoints);
 
 		++side;
 		++curSide;
@@ -759,4 +760,61 @@ void CM_FindRandomBrushByName()
 	
 
 	//VectorCopy(cm->brushes[idx].maxs, ps_loc->origin);
+}
+bool CM_BrushInView(const cbrush_t* brush, struct cplane_s* frustumPlanes, int numPlanes)
+{
+	if (numPlanes <= 0)
+		return 1;
+
+	cplane_s* plane = frustumPlanes;
+	int idx = 0;
+	while ((BoxOnPlaneSide(brush->mins, brush->maxs, plane) & 1) != 0) {
+		++plane;
+		++idx;
+
+		if (idx >= numPlanes)
+			return 1;
+	}
+
+	return 0;
+}
+void RB_ShowCollision(GfxViewParms* viewParms)
+{
+	if (brushWindings.empty() && cm_terrainpoints.empty())
+		return;
+
+	cplane_s frustum_planes[6];
+
+	BuildFrustumPlanes(viewParms, frustum_planes);
+
+	frustum_planes[5].normal[0] = -frustum_planes[4].normal[0];
+	frustum_planes[5].normal[1] = -frustum_planes[4].normal[1];
+	frustum_planes[5].normal[2] = -frustum_planes[4].normal[2];
+
+	frustum_planes[5].dist = -frustum_planes[4].dist - 2000;
+	auto plane = &frustum_planes[5];
+
+	char signbit = 0;
+
+	if (plane->normal[0] != 1.f) {
+		if (plane->normal[1] == 1.f)
+			signbit = 1;
+		else {
+			signbit = plane->normal[2] == 1.f ? 2 : 3;
+		}
+	}
+
+	plane->type = signbit;
+
+	SetPlaneSignbits(plane);
+
+	for (auto& i : brushWindings)
+		if (CM_BrushInView(i.brush, frustum_planes, 5))
+			RB_RenderWinding(&i);
+
+	for (auto& i : cm_terrainpoints) {
+		CM_ShowTerrain(&i, frustum_planes);
+	}
+
+
 }
