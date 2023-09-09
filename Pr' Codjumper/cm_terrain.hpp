@@ -8,6 +8,7 @@ struct cm_triangle
 	fvec3 b;
 	fvec3 c;
 	vec4_t plane;
+	bool edge_walkable = true;
 
 	fvec3 get_mins() const noexcept {
 		fvec3 lowest = FLT_MAX;
@@ -59,6 +60,6 @@ void CM_AdvanceAabbTree(CollisionAabbTree* aabbTree, cm_terrain* terrain);
 
 void CM_ShowTerrain(cm_terrain* terrain, struct cplane_s* frustumPlanes);
 bool CM_TriangleInView(const cm_triangle* leaf, struct cplane_s* frustumPlanes, int numPlanes);
-
+char CM_IsEdgeWalkable(int edgeIndex, int triIndex);
 
 inline std::list<cm_terrain> cm_terrainpoints;

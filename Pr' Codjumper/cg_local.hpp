@@ -1052,7 +1052,14 @@ struct MantleState
 	int transIndex;
 	int flags;
 };
-
+struct MantleResults
+{
+	float dir[3];
+	float startPos[3];
+	float ledgePos[3];
+	float endPos[3];
+	int flags;
+};
 struct ActionSlotParam_SpecifyWeapon
 {
 	unsigned int index;

@@ -104,9 +104,11 @@ void Gui::geometry_create_terrain(Gui_SubCategory& category)
 
 	const auto showterrain = instance.add_variable<bool>("Show Terrain", false);
 	const auto showterrain_filter = instance.add_array<char>("Filter##01", coll_buf, 128);
+	const auto showterrain_unwalkable = instance.add_variable<bool>("Unwalkable Edges", false);
 
 	items.append_item(Gui_Item(showterrain, "Draws the outlines of each terrain piece", terrain_geom_find_with_filter, std::nullopt, true));
 	items.append_item(Gui_Item(showterrain_filter, "Only draws materials that include this substring", terrain_geom_change_filter, std::nullopt, false, true));
+	items.append_item(Gui_Item(showterrain_unwalkable, "Show terrain edges you can't walk on (possible new bounces)", std::nullopt, std::nullopt, true, false));
 
 	category.append_itemlist(items);
 

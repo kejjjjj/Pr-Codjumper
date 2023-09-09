@@ -38,6 +38,8 @@ void PM_MovementSimulation::StartSimulation()
 void PM_MovementSimulation::PmoveSingle(pmove_t* pm, pml_t* pml)
 {
 	playerState_s* ps = pm->ps;
+	static dvar_s* mantle_enable = Dvar_FindMalleableVar("mantle_enable");
+
 
 	if ((pm->ps->pm_flags & PMF_MELEE_CHARGE) != 0)
 		pm->cmd.forwardmove = 127;
@@ -191,7 +193,7 @@ void PM_MovementSimulation::PmoveSingle(pmove_t* pm, pml_t* pml)
 		PM_GroundTrace_(pm, pml);
 	}
 
-	//Mantle_Check(pm, pml);
+	Mantle_Check(pm, pml);
 
 	if ((ps->pm_flags & PMF_MANTLE) != 0) {
 
@@ -205,8 +207,8 @@ void PM_MovementSimulation::PmoveSingle(pmove_t* pm, pml_t* pml)
 		PM_UpdateSprint_(pm);
 		PM_UpdatePlayerWalkingFlag_(pm);
 		PM_CheckDuck_(pm, pml);
-		//if (mantle_enable->current.enabled)
-		//	Mantle_Move(ps, pml);
+		if (mantle_enable->current.enabled)
+			Mantle_Move(ps, pm,pml);
 
 		PM_Weapon(pm, pml);
 
@@ -226,13 +228,7 @@ void PM_MovementSimulation::PmoveSingle(pmove_t* pm, pml_t* pml)
 			PM_LadderMove_(pm, pml);
 		}
 		else if (pml->walking) {
-			//if (seg.options.bhop)
-			//	pm->cmd.buttons |= cmdEnums::jump;
-			//pm->cmd.rightmove = -127;
-			//pm->cmd.forwardmove = -127;
 			HookTable::getInstance().find(hookEnums_e::HOOK_PM_WALKMOVE).value()->second.cast_call<void(*)(pmove_t*, pml_t*)>(pm, pml);//walkmove
-			//PM_WalkMove(pm, pml);
-
 		}
 		else {
 			engine_call<void __cdecl>(false, 0x40F680, pm, pml); //airmove

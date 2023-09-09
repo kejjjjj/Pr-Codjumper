@@ -20,7 +20,6 @@ void CM_AdvanceAabbTree(CollisionAabbTree* aabbTree, cm_terrain* terrain)
 	CollisionPartition* partition = &cm->partitions[fChild.firstChildIndex];
 
 	int firstTri = partition->firstTri;
-	vec4_t plane;
 
 	
 
@@ -34,12 +33,27 @@ void CM_AdvanceAabbTree(CollisionAabbTree* aabbTree, cm_terrain* terrain)
 
 		do {
 			cm_triangle tri;
+			tri.edge_walkable = CM_IsEdgeWalkable(2, firstTri);
 
 			tri.a = cm->verts[cm->triIndices[triIndice]];
 			tri.b = cm->verts[cm->triIndices[triIndice+1]];
 			tri.c = cm->verts[cm->triIndices[triIndice+2]];
 
+			//filter out some of the useless ones that are inside solid
+			if (!tri.edge_walkable) {
+				trace_t trace;
+				CG_TracePoint(vec3_t{ 0,0,0 }, &trace, tri.a, vec3_t{ 0,0,0 }, tri.a, cgs->clientNum, MASK_PLAYERSOLID, 0, 0);
+
+				if (trace.startsolid)
+					tri.edge_walkable = true;
+
+			}
+
 			PlaneFromPoints(tri.plane, tri.a, tri.b, tri.c);
+
+
+			if ((tri.plane[2]) >= 0.3f && (tri.plane[2]) <= 0.7f)
+				tri.edge_walkable = true;
 
 			terrain->tris.push_back(std::move(tri));
 
@@ -89,10 +103,19 @@ void CM_ShowTerrain(cm_terrain* terrain, struct cplane_s* frustumPlanes)
 	const auto only_bounces = find_evar<bool>("Only Bounces");
 	const auto depth_test = find_evar<bool>("Depth Test");
 
+	bool unwalkable_edges = find_evar<bool>("Unwalkable Edges")->get();
 
 	for (auto it = terrain->tris.begin(); it != terrain->tris.end(); ++it) {
 	
-		if ((it->plane[2] < 0.3f || it->plane[2] > 0.7f) && only_bounces->get())
+		if ((it->plane[2] < 0.3f || it->plane[2] > 0.7f) && only_bounces->get()) {
+			if (!unwalkable_edges)
+				continue;
+
+			else if (it->edge_walkable)
+				continue;
+		}
+
+		if (it->edge_walkable && unwalkable_edges)
 			continue;
 
 		//don't render if not visible
@@ -133,4 +156,18 @@ bool CM_TriangleInView(const cm_triangle* tris, struct cplane_s* frustumPlanes, 
 	}
 
 	return 0;
+}
+char CM_IsEdgeWalkable(int edgeIndex, int triIndex)
+{
+	char r{};
+	__asm
+	{
+		mov ecx, triIndex;
+		mov eax, edgeIndex;
+		mov esi, 0x4EFCB0;
+		call esi;
+		mov r, al;
+	}
+
+	return r;
 }

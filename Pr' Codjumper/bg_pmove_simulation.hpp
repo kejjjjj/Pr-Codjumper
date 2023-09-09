@@ -94,6 +94,19 @@ private:
 			add esp, 0x4;
 		}
 	}
+	static void Mantle_Move(playerState_s* ps, pmove_t* pm, pml_t* pml)
+	{
+		__asm
+		{
+			
+			mov edi, ps;
+			push pml;
+			push pm;
+			mov esi, 0x409000;
+			call esi;
+			add esp, 0x8;
+		}
+	}
 	static void PM_CheckDuck_(pmove_t* pm, pml_t* pml)
 	{
 		__asm
