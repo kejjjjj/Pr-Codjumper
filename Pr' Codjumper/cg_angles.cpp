@@ -1,4 +1,34 @@
 #include "pch.hpp"
+void CG_SetYaw(const float ang)
+{
+	float ref = clients->cgameViewangles[YAW];
+	ref = fmodf(ref, 360);
+	ref -= ref * 2 - ang;
+	clients->viewangles[1] += ref;
+
+}
+void CG_SetPitch(const float ang)
+{
+	float ref = clients->cgameViewangles[PITCH];
+	ref = fmodf(ref, 360);
+	ref -= ref * 2 - ang;
+	clients->viewangles[0] += ref;
+
+}
+void CG_SetRoll(const float ang)
+{
+	float ref = clients->cgameViewangles[ROLL];
+	ref = fmodf(ref, 360);
+	ref -= ref * 2 - ang;
+	clients->viewangles[2] += ref;
+
+}
+void CG_SetPlayerAngles(const fvec3& target)
+{
+	CG_SetPitch(target.x);
+	CG_SetYaw(target.y);
+	CG_SetRoll(target.z);
+}
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 {
 	float angle;

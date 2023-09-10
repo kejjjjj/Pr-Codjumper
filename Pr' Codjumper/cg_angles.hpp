@@ -8,6 +8,11 @@ struct range_t
 	bool split;
 };
 
+void CG_SetYaw(const float ang);
+void CG_SetPitch(const float ang);
+void CG_SetRoll(const float ang);
+void CG_SetPlayerAngles(const fvec3& target);
+
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 float ProjectionX(float angle, float fov);
 range_t AnglesToRange(float start, float end, float yaw, float fov);

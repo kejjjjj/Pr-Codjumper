@@ -156,6 +156,7 @@
     <ClInclude Include="cg_init.hpp" />
     <ClInclude Include="cg_local.hpp" />
     <ClInclude Include="cg_offsets.hpp" />
+    <ClInclude Include="cl_client.hpp" />
     <ClInclude Include="cl_mouse.hpp" />
     <ClInclude Include="cm_brush.hpp" />
     <ClInclude Include="cm_terrain.hpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="typedefs.hpp" />
     <ClInclude Include="t_anglehelpers.hpp" />
     <ClInclude Include="t_movement.hpp" />
+    <ClInclude Include="t_playback.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bg_pmove.cpp" />
@@ -215,6 +217,7 @@
     <ClCompile Include="cg_angles.cpp" />
     <ClCompile Include="cg_hooks.cpp" />
     <ClCompile Include="cg_init.cpp" />
+    <ClCompile Include="cl_client.cpp" />
     <ClCompile Include="cl_mouse.cpp" />
     <ClCompile Include="cm_brush.cpp" />
     <ClCompile Include="cm_terrain.cpp" />
@@ -319,6 +322,7 @@
     <ClCompile Include="sys_tools.cpp" />
     <ClCompile Include="t_anglehelpers.cpp" />
     <ClCompile Include="t_movement.cpp" />
+    <ClCompile Include="t_playback.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

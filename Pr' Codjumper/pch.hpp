@@ -118,6 +118,7 @@ typedef vec_t vec4_t[4];
 #include "bg_pmove_simulation.hpp"
 
 #include "cl_mouse.hpp"
+#include "cl_client.hpp"
 
 #include "r_renderer.hpp"
 #include "r_drawtools.hpp"
@@ -134,6 +135,7 @@ typedef vec_t vec4_t[4];
 
 #include "rb_endscene.hpp"
 
+#include "t_playback.hpp"
 #include "t_anglehelpers.hpp"
 #include "t_movement.hpp"
 

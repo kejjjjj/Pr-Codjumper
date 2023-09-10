@@ -31,9 +31,10 @@ void CG_CreateHooks()
 	hooktable.insert(hookEnums_e::HOOK_PM_AIRMOVE, hook::hookobj<void*>(0x40F680, PM_AirMove, TRUE));
 	hooktable.insert(hookEnums_e::HOOK_PM_UPDATE_VIEWANGLES, hook::hookobj<void*>(0x413580, PM_UpdateViewAngles, TRUE));
 
-	hooktable.insert(hookEnums_e::HOOK_CL_MOUSEMOVE, hook::hookobj<void*>(0x463400, CL_GetMouseMovement, TRUE));
-
 	hooktable.insert(hookEnums_e::HOOK_RB_ENDSCENE, hook::hookobj<void*>(0x658860, RB_DrawDebug, TRUE));
+
+	hooktable.insert(hookEnums_e::HOOK_CL_MOUSEMOVE, hook::hookobj<void*>(0x463400, CL_GetMouseMovement, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_CL_FINISHMOVE, hook::hookobj<void*>(0x463A60, CL_FinishMove, TRUE));
 
 
 }

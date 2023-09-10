@@ -82,6 +82,9 @@
     <Filter Include="Source Files\rb">
       <UniqueIdentifier>{247b0ed2-f070-4c90-800d-ff041cf2369b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\playback">
+      <UniqueIdentifier>{e7edb095-8d7f-4268-a949-9ae550ff7c94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -261,6 +264,12 @@
     <ClInclude Include="cm_terrain.hpp">
       <Filter>Source Files\cmod</Filter>
     </ClInclude>
+    <ClInclude Include="t_playback.hpp">
+      <Filter>Source Files\playback</Filter>
+    </ClInclude>
+    <ClInclude Include="cl_client.hpp">
+      <Filter>Source Files\cl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -433,6 +442,12 @@
     </ClCompile>
     <ClCompile Include="cm_terrain.cpp">
       <Filter>Source Files\cmod</Filter>
+    </ClCompile>
+    <ClCompile Include="t_playback.cpp">
+      <Filter>Source Files\playback</Filter>
+    </ClCompile>
+    <ClCompile Include="cl_client.cpp">
+      <Filter>Source Files\cl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,7 +26,9 @@ enum class hookEnums_e : short
 
 	HOOK_RB_ENDSCENE,
 
-	HOOK_CL_MOUSEMOVE
+	HOOK_CL_MOUSEMOVE,
+	HOOK_CL_FINISHMOVE
+
 };
 
 class HookTable

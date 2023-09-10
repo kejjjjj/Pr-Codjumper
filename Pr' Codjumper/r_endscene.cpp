@@ -188,6 +188,7 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 void __cdecl Renderer::CG_DrawActive()
 {
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_DRAWACTIVE);
+	static Playback& playback = Playback::getInstance();
 
 	if (!T::Movement::T_Ready())
 		return detour_func.cast_call<void(__cdecl*)()>();
@@ -213,6 +214,7 @@ void __cdecl Renderer::CG_DrawActive()
 		R_AddCmdDrawTextWithEffects(buffer, "fonts/objectivefont", cgs->refdef.width / 2.f - 15.f, cgs->refdef.height / 2.f + 30.f, 1.3f, 1.3f, 0.f, vec4_t{ 1,1,0,1 }, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
 	}
 
+	playback.DrawPlayback();
 
 	return detour_func.cast_call<void (__cdecl*)()>();
 }

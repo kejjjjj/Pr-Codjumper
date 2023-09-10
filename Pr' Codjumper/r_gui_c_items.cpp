@@ -1,68 +1,6 @@
 
 #include "pch.hpp"
 
-Gui_Item::Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::function<void(bool)>> onClicked, std::optional<_slider> sliderData, bool isCheckbox, bool isInputbox)
-{
-	if (!ref) {
-		FatalError("Gui_Item(): invalid ref variable");
-		return;
-	}
-
-	linked_variable = ref;
-	checkbox = isCheckbox;
-	tooltip = _tooltip;
-	inputbox = isInputbox;
-	if(onClicked.has_value())
-		activation_event = onClicked.value();
-
-	if (sliderData.has_value()) {
-		slider = std::shared_ptr<_slider>(new _slider(std::move(sliderData.value())));
-		return;
-	}
-
-	if (checkbox && ref->is_array()) {
-		FatalError("Gui_Item(): checkbox and array at the same time");
-		return;
-	}
-	if (inputbox && !ref->is_array()) {
-		FatalError("Gui_Item(): inputbox and not array");
-		return;
-	}
-
-	std::cout << "ref: 0x" << ref << '\n';
-	std::cout << "checkbox: " << checkbox << '\n';
-}
-
-void Gui_Item::render()
-{
-	if (checkbox) {
-		auto o = linked_variable->get_raw();
-		if (ImGui::Checkbox2(linked_variable->get_name().c_str(), (bool*)o) && activation_event)
-			activation_event(*(bool*)o);
-		//ImGui::SameLine();
-		ImGui::Tooltip(tooltip);
-	}
-	else if (inputbox) {
-		ImGui::SetNextItemWidth(100);
-		if (ImGui::InputText(linked_variable->get_name().c_str(), (char*)linked_variable->get_raw(), 128) && activation_event)
-			activation_event(true);
-
-	}
-	else if (slider.get()) {
-		ImGui::SetNextItemWidth(100);
-		switch (slider->type) {
-		case sliderType::INT:
-			ImGui::SliderInt(linked_variable->get_name().c_str(), (int*)linked_variable->get_raw(), slider->integer.min, slider->integer.max);
-			break;
-		case sliderType::FLOAT:
-			ImGui::SliderFloat(linked_variable->get_name().c_str(), (float*)linked_variable->get_raw(), slider->value.min, slider->value.max);
-			break;
-		}
-
-	}
-
-	
-}
 
 void Gui_CategoryItems::render()
 {

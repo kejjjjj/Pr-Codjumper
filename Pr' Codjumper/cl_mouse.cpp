@@ -9,8 +9,6 @@ void __cdecl do_stuff(clientActive_t* client, float* my, float* mx)
 	int v4; // ecx
 	int v5; // [esp+0h] [ebp-4h]
 
-	if (GetAsyncKeyState(VK_NUMPAD4) < 0)
-		*mx += 1;
 
 	if (Dvar_FindMalleableVar("m_filter")->current.enabled)
 	{

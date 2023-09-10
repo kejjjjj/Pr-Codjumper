@@ -123,41 +123,6 @@ private:
 	float min = 0;
 	float max = 0;
 };
-class Gui_Item
-{
-public:
-	enum class sliderType
-	{
-		INT,
-		FLOAT,
-		STRING
-	};
-
-	struct _slider
-	{
-		sliderType type;
-		struct {
-			int min;
-			int max;
-		}integer;
-		struct {
-			float min;
-			float max;
-		}value;
-	};
-
-	Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::function<void(bool)>> onClicked=std::nullopt, std::optional<_slider> sliderData = std::nullopt, bool isCheckbox = false, bool isInputbox = false);
-
-	void render();
-
-private:
-	EvarBase* linked_variable = 0;
-	bool checkbox = false;
-	bool inputbox = false;
-	std::shared_ptr<_slider> slider;
-	const char* tooltip;
-	std::function<void(bool)> activation_event;
-};
 
 
 class Gui_CategoryItems
