@@ -8,7 +8,7 @@ void Gui::initialize()
 	automation_create_hardcoded();
 	geometry_create_hardcoded();
 
-	set_active(categories.front());
+	set_active(categories.front().get());
 	
 }
 void Gui::menu_toggle()
@@ -160,7 +160,7 @@ void Gui::bottom_categories()
 			ivec2 mins = ivec2(pos.x + _pos.x + x_offset, pos.y + _pos.y);
 			ivec2 maxs = ivec2(pos.x + _pos.x + x_offset + mainSize.x, pos.y + _pos.y + mainSize.y);
 
-			it->render(mins, maxs, &active_category);
+			(*it)->render(mins, maxs, &active_category);
 			//ImGui::SameLine();
 			//ImGui::Dummy(ivec2(5, 0));
 			//ImGui::SameLine();
@@ -199,7 +199,7 @@ void Gui::right_categories()
 
 	for (auto& i : active_category->get_active()->get_items()) {
 
-		const_cast<Gui_CategoryItems&>(i).render();
+		const_cast<Gui_CategoryItems&>(*i).render();
 	}
 
 

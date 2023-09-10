@@ -8,20 +8,11 @@ void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* 
 		return;
 
 
-	bool show_all = GetAsyncKeyState(VK_NUMPAD6) & 1;
-	if (show) {
-		std::cout << "tris[0]: {" << points[0].x << ", " << points[0].y << ", " << points[0].z << "}\n";
-		std::cout << "tris[1]: {" << points[1].x << ", " << points[1].y << ", " << points[1].z << "}\n";
-		std::cout << "tris[2]: {" << points[2].x << ", " << points[2].y << ", " << points[2].z << "}\n";
+	constexpr MaterialTechniqueType tech = MaterialTechniqueType::TECHNIQUE_UNLIT;
+	Material* material = rgp->whiteMaterial;
+	static uint32_t ogBits = material->stateBitsTable->loadBits[1];
 
-	}
-
-	static Material whiteMaterial = *rgp->whiteMaterial;
-	static uint32_t ogBits = whiteMaterial.stateBitsTable->loadBits[1];
-
-	Material* material = &whiteMaterial;
-
-	if (gfxCmdBufState->origMaterial != material || gfxCmdBufState->origTechType != MaterialTechniqueType::TECHNIQUE_UNLIT) {
+	if (gfxCmdBufState->origMaterial != material || gfxCmdBufState->origTechType != tech) {
 		if (tess->indexCount)
 			RB_EndTessSurface();
 
@@ -37,7 +28,7 @@ void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* 
 
 		//material->stateBitsTable->loadBits[1] = 44;
 
-		RB_BeginSurface(MaterialTechniqueType::TECHNIQUE_UNLIT, material);
+		RB_BeginSurface(tech, material);
 
 	}
 	if (n_points + tess->vertexCount > 5450 || tess->indexCount + 2 * (n_points - 2) > 1048576)// RB_CheckTessOverflow
@@ -48,8 +39,12 @@ void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* 
 	int idx = 0;
 
 	for (; idx < n_points; ++idx) {
+		//there should never be < 3 points
+		//vec4_t plane;
+		//PlaneFromPoints(plane, points[0], points[1], points[2]);
+
 		vec3_t p = { points[idx].x, points[idx].y, points[idx].z };
-		RB_SetPolyVertice(p, color, tess->vertexCount + idx, idx);
+		RB_SetPolyVertice(p, color, tess->vertexCount + idx, idx, 0);
 	}
 
 	for (idx = 2; idx < n_points; ++idx)
@@ -65,7 +60,7 @@ void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* 
 	RB_EndTessSurface();
 
 }
-int RB_AddDebugLine(GfxPointVertex* verts, char depthTest, const vec_t* start, vec_t* end, const vec_t* color, int vertCount)
+int RB_AddDebugLine(GfxPointVertex* verts, char depthTest, const vec_t* start, vec_t* end, const BYTE* color, int vertCount)
 {
 	int _vc = vertCount;
 	uint8_t _color[4]{ 0,0,0,0 };
@@ -76,10 +71,12 @@ int RB_AddDebugLine(GfxPointVertex* verts, char depthTest, const vec_t* start, v
 	}
 
 	GfxPointVertex* vert = &verts[_vc];
-	if (color) {
-		R_ConvertColorToBytes(color, vert->color);
-	}
+	//if (color) {
+	//	R_ConvertColorToBytes(color, vert->color);
+	//}
 
+	VectorCopy(color, vert->color);
+	vert->color[3] = color[3];
 	verts[_vc + 1].color[0] = vert->color[0];
 	verts[_vc + 1].color[1] = vert->color[1];
 	verts[_vc + 1].color[2] = vert->color[2];
@@ -132,7 +129,7 @@ void RB_EndTessSurface()
 	((void(*)())0x61A2F0)();
 
 }
-void RB_SetPolyVertice(const vec3_t pos, const BYTE* col, const int vert, const int index)
+void RB_SetPolyVertice(const vec3_t pos, const BYTE* col, const int vert, const int index, float* normal)
 {
 	VectorCopy(pos, tess->verts[vert].xyzw);
 	//tess->verts[vert].color.packed = 0xFF00FFAA;
@@ -169,7 +166,7 @@ void RB_SetPolyVertice(const vec3_t pos, const BYTE* col, const int vert, const 
 		break;
 	}
 
-	tess->verts[vert].normal.packed = 1073643391;
+	tess->verts[vert].normal.packed = normal ? Vec3PackUnitVec(normal) : 1073643391;
 }
 char RB_DrawDebug(GfxViewParms* viewParms)
 {
@@ -185,11 +182,13 @@ void RB_DrawTriangleOutline(vec3_t points[3], vec4_t color, int width, bool dept
 {
 	GfxPointVertex verts[6]{};
 
+	BYTE c[4];
 
+	R_ConvertColorToBytes(color, c);
 
-	RB_AddDebugLine(verts, depthTest, points[0], points[1], color, 0);
-	RB_AddDebugLine(verts, depthTest, points[0], points[2], color, 2);
-	RB_AddDebugLine(verts, depthTest, points[1], points[2], color, 4);
+	RB_AddDebugLine(verts, depthTest, points[0], points[1], c, 0);
+	RB_AddDebugLine(verts, depthTest, points[0], points[2], c, 2);
+	RB_AddDebugLine(verts, depthTest, points[1], points[2], c, 4);
 
 	RB_DrawLines3D(3, width, verts, depthTest);
 

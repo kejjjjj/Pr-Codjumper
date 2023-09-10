@@ -679,48 +679,26 @@ void RB_RenderWinding(const winding2_t* w)
 	int points = std::clamp(w->numpoints, 0, 8);
 
 	const auto only_bounces = find_evar<bool>("Only Bounces");
+	const auto drawdist = find_evar<float>("Distance");
 
 
-	if (w->hasBounce == false && only_bounces->get() || Distance(clients->cgameOrigin, w->p[0]) > 2000)
+	if (w->hasBounce == false && only_bounces->get() || Distance(clients->cgameOrigin, w->brush->get_origin()) > drawdist->get())
 		return;
 
 	bool show_all = GetAsyncKeyState(VK_NUMPAD6) & 1;
 
-	//uint8_t c[4];
+	RB_DrawCollisionPoly(std::clamp(w->numpoints, 0, 8), (float(*)[3])w->p, vec4_t {0,1,1,0.3f});
+	
+	//GfxPointVertex verts[4]{};
+	//const auto depthtest = find_evar<bool>("Depth Test");
 
-	//R_ConvertColorToBytes(vec4_t{ 1,0,0,0.7 }, c);
+	//for (int i = 0; i < points-1; i++) {
 
-	//for (int i = 0; i < points-3; i+=3) {
 
-	//	tris.clear();
-	//	tris.push_back({ w->p[i][0], w->p[i][1], w->p[i][2] });
-	//	tris.push_back({ w->p[i+1][0], w->p[i+1][1], w->p[i+1][2] });
-	//	tris.push_back({ w->p[i+2][0], w->p[i+2][1], w->p[i+2][2] });
-
-	//	//std::cout << "tris.size():" << tris.size() << '\n';
-
-	//	if (show_all) {
-	//		std::cout << "tris[0]: {" << tris[0].x << ", " << tris[0].y << ", " << tris[0].z << "}\n";
-	//		std::cout << "tris[1]: {" << tris[1].x << ", " << tris[1].y << ", " << tris[1].z << "}\n";
-	//		std::cout << "tris[2]: {" << tris[2].x << ", " << tris[2].y << ", " << tris[2].z << "}\n";
-
-	//	}
-
-	//	RB_DrawPolyInteriors(3, tris, c, true, true, show_all);
-	//	break;
-	//	//RB_DrawTriangleOutline(tris, vec4_t{ 1,0,0,1 }, 3, false);
+	//	RB_AddDebugLine(verts, depthtest->get(), w->p[i], (float*)w->p[i + 1], vec4_t{1.f,0.f,0.f,1.f}, 0);
+	//	RB_DrawLines3D(1, 3, verts, depthtest->get());
 
 	//}
-	GfxPointVertex verts[4]{};
-	const auto depthtest = find_evar<bool>("Depth Test");
-
-	for (int i = 0; i < points-1; i++) {
-
-
-		RB_AddDebugLine(verts, depthtest->get(), w->p[i], (float*)w->p[i + 1], vec4_t{1.f,0.f,0.f,1.f}, 0);
-		RB_DrawLines3D(1, 3, verts, depthtest->get());
-
-	}
 
 }
 
@@ -816,5 +794,30 @@ void RB_ShowCollision(GfxViewParms* viewParms)
 		CM_ShowTerrain(&i, frustum_planes);
 	}
 
+
+}
+void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFloat)
+{
+	uint8_t c[4];
+	std::vector<fvec3> pts;
+	const auto depthtest = find_evar<bool>("Depth Test");
+
+	R_ConvertColorToBytes(colorFloat, c);
+	
+	for (int i = 0; i < numPoints; i++)
+		pts.push_back(points[i]);
+
+
+	//GfxPointVertex verts[4]{};
+
+	//for (int i = 0; i < numPoints -1; i++) {
+
+
+	//	RB_AddDebugLine(verts, depthtest->get(), points[i], (float*)points[i + 1], c, 0);
+	//	RB_DrawLines3D(1, 3, verts, depthtest->get());
+
+	//}
+
+	RB_DrawPolyInteriors(numPoints, pts, c, true, depthtest->get());
 
 }

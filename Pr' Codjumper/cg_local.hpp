@@ -3283,6 +3283,10 @@ struct cbrush_t
 	__int16 cmSubmodelIndex;
 	bool isSubmodel;
 	bool pad;
+
+	fvec3 get_origin() const noexcept {
+		return { maxs[0] + (maxs[0] - mins[0]) / 2, maxs[1] + (maxs[1] - mins[1]) / 2, maxs[2] + (maxs[0] - mins[0]) / 2 };
+	}
 };
 #pragma pack(pop)
 //

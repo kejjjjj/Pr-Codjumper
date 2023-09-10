@@ -21,3 +21,16 @@ float random(const float range); //0 -> HI
 float random(const float min, const float range); //LO -> HI
 
 void SetPlaneSignbits(cplane_s* out);
+
+
+inline int Vec3PackUnitVec(float* v) {
+	int r = 0;
+	__asm
+	{
+		mov eax, v;
+		mov esi, 0x5645A0;
+		call esi;
+		mov r, eax;
+	}
+	return r;
+}

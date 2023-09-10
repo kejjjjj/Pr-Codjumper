@@ -102,6 +102,7 @@ void CM_ShowTerrain(cm_terrain* terrain, struct cplane_s* frustumPlanes)
 
 	const auto only_bounces = find_evar<bool>("Only Bounces");
 	const auto depth_test = find_evar<bool>("Depth Test");
+	const auto drawdist = find_evar<float>("Distance");
 
 	bool unwalkable_edges = find_evar<bool>("Unwalkable Edges")->get();
 
@@ -130,7 +131,7 @@ void CM_ShowTerrain(cm_terrain* terrain, struct cplane_s* frustumPlanes)
 		center.y = { (points[0].y + points[1].y + points[2].y) / 3 };
 		center.z = { (points[0].z + points[1].z + points[2].z) / 3};
 
-		if (center.dist(clients->cgameOrigin) > 5000)
+		if (center.dist(clients->cgameOrigin) > drawdist->get())
 			continue;
 
 		RB_DrawPolyInteriors(3, points, col, true, depth_test->get());

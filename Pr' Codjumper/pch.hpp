@@ -8,7 +8,7 @@
 #define PCH_H
 
 #define GAME_PRINT(x) Com_Printf(CON_CHANNEL_OBITUARY, x);
-
+#define NOMINMAX
 constexpr auto GAME_NAME = "Call of Duty 4";
 constexpr auto MODULE_NAME = "iw3mp.exe";
 

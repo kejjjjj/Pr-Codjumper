@@ -24,7 +24,7 @@ void brush_geom_find_with_filter(const bool newState)
 
 
 }
-void brush_geom_change_filter(bool)
+void brush_geom_change_filter()
 {
 	brushWindings.clear();
 	brush_geom_find_with_filter(true);
@@ -50,7 +50,7 @@ void terrain_geom_find_with_filter(const bool newState)
 
 
 }
-void terrain_geom_change_filter(bool)
+void terrain_geom_change_filter()
 {
 	cm_terrainpoints.clear();
 	terrain_geom_find_with_filter(true);
@@ -59,46 +59,49 @@ void Gui::geometry_create_hardcoded()
 {
 	decltype(auto) resources = Resources::getInstance();
 
-	Gui_MainCategory category(resources.FindTexture("clipmap").value(), "Clip Map");
-	Gui_SubCategory subcategory("Brushes");
-	Gui_SubCategory subcategory_terrain("Terrain");
-	Gui_SubCategory subcategory_preferences("Preferences");
+	std::unique_ptr<Gui_MainCategory> category = std::make_unique<Gui_MainCategory>(resources.FindTexture("clipmap").value(), "Clip Map");
+	std::unique_ptr<Gui_SubCategory> subcategory = std::make_unique<Gui_SubCategory>("Brushes");
+	std::unique_ptr<Gui_SubCategory> subcategory_terrain = std::make_unique<Gui_SubCategory>("Terrain");
+	std::unique_ptr<Gui_SubCategory> subcategory_preferences = std::make_unique<Gui_SubCategory>("Preferences");
+
 
 	geometry_create_clipmap(subcategory);
 	geometry_create_terrain(subcategory_terrain);
 	geometry_create_preferences(subcategory_preferences);
 
-	append_category(category);
-	categories.back().append_subcategory(subcategory);
-	categories.back().append_subcategory(subcategory_terrain);
-	categories.back().append_subcategory(subcategory_preferences);
+	append_category(std::move(category));
+	categories.back()->append_subcategory(std::move(subcategory));
+	categories.back()->append_subcategory(std::move(subcategory_terrain));
+	categories.back()->append_subcategory(std::move(subcategory_preferences));
 
 }
 
-void Gui::geometry_create_clipmap(Gui_SubCategory& category)
+void Gui::geometry_create_clipmap(std::unique_ptr<Gui_SubCategory>& category)
 {
 	char coll_buf[128] = "clip";
 	EvarTable& instance = EvarTable::getInstance();
 
-	Gui_CategoryItems items("Brushes");
+	//Gui_CategoryItems items("Brushes");
+
+	std::unique_ptr<Gui_CategoryItems> items = std::make_unique<Gui_CategoryItems>("Brushes");
+
 
 	const auto showcollision = instance.add_variable<bool>("Show Collisions", false);
 	const auto showcollision_filter = instance.add_array<char>("Filter", coll_buf, 128);
 
+	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(showcollision, "Draws the outlines of each collision brush", brush_geom_find_with_filter))));
+	items->append_item(std::move(std::make_unique<Gui_ItemInputText>(Gui_ItemInputText(showcollision_filter, "Only draws materials that include this substring", 128, brush_geom_change_filter))));
 
-	items.append_item(Gui_Item(showcollision, "Draws the outlines of each collision brush", brush_geom_find_with_filter, std::nullopt, true));
-	items.append_item(Gui_Item(showcollision_filter, "Only draws materials that include this substring", brush_geom_change_filter, std::nullopt, false, true));
-
-	category.append_itemlist(items);
+	category->append_itemlist(std::move(items));
 
 
 
 
 }
-void Gui::geometry_create_terrain(Gui_SubCategory& category)
+void Gui::geometry_create_terrain(std::unique_ptr<Gui_SubCategory>& category)
 {
 	EvarTable& instance = EvarTable::getInstance();
-	Gui_CategoryItems items("Terrain");
+	std::unique_ptr<Gui_CategoryItems> items = std::make_unique<Gui_CategoryItems>("Terrain");
 	char coll_buf[128] = "clip";
 
 
@@ -106,26 +109,29 @@ void Gui::geometry_create_terrain(Gui_SubCategory& category)
 	const auto showterrain_filter = instance.add_array<char>("Filter##01", coll_buf, 128);
 	const auto showterrain_unwalkable = instance.add_variable<bool>("Unwalkable Edges", false);
 
-	items.append_item(Gui_Item(showterrain, "Draws the outlines of each terrain piece", terrain_geom_find_with_filter, std::nullopt, true));
-	items.append_item(Gui_Item(showterrain_filter, "Only draws materials that include this substring", terrain_geom_change_filter, std::nullopt, false, true));
-	items.append_item(Gui_Item(showterrain_unwalkable, "Show terrain edges you can't walk on (possible new bounces)", std::nullopt, std::nullopt, true, false));
+	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(showterrain, "Draws the outlines of each terrain piece", terrain_geom_find_with_filter))));
+	items->append_item(std::move(std::make_unique<Gui_ItemInputText>(Gui_ItemInputText(showterrain_filter, "Only draws materials that include this substring", 128, terrain_geom_change_filter))));
+	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(showterrain_unwalkable, "Show terrain edges you can't walk on (possible new bounces)"))));
 
-	category.append_itemlist(items);
+	category->append_itemlist(std::move(items));
 
 }
-void Gui::geometry_create_preferences(Gui_SubCategory& category)
+void Gui::geometry_create_preferences(std::unique_ptr<Gui_SubCategory>& category)
 {
 	EvarTable& instance = EvarTable::getInstance();
 
-	Gui_CategoryItems items("General");
+	//Gui_CategoryItems items("General");
+	std::unique_ptr<Gui_CategoryItems> items = std::make_unique<Gui_CategoryItems>("General");
 
 
 	const auto only_bounces = instance.add_variable<bool>("Only Bounces", false);
 	const auto depth_test = instance.add_variable<bool>("Depth Test", false);
+	const auto draw_distance = instance.add_variable<float>("Distance", false);
 
-	items.append_item(Gui_Item(only_bounces, "Only renders windings that can be bounced", std::nullopt, std::nullopt, true));
-	items.append_item(Gui_Item(depth_test, "Don't render through walls", std::nullopt, std::nullopt, true));
+	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(only_bounces, "Only renders windings that can be bounced"))));
+	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(depth_test, "Don't render through walls"))));
+	items->append_item(std::move(std::make_unique<Gui_ItemSliderFloat>(Gui_ItemSliderFloat(draw_distance, "Maximum distance to show collision surfaces", 0, 20000))));
 
-	category.append_itemlist(items);
+	category->append_itemlist(std::move(items));
 
 }

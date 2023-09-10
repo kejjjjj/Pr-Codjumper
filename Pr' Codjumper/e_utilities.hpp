@@ -31,3 +31,5 @@ void __cdecl CG_TracePoint(const vec3_t maxs, trace_t* trace, const vec3_t start
 inline void (*CG_Trace)(trace_t* result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipEntity, int tracemask) = (void(__cdecl*)(trace_t*, const vec3_t, const vec3_t, const vec3_t, const vec3_t, int, int))0x45A230;
 int PM_playerTrace(pmove_t* pm, trace_t* trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
 pmove_t* PM_AddTouchEnt(pmove_t* pm, int groundEntityNum);
+
+Material* FindMaterialByName(const std::string& mtl);

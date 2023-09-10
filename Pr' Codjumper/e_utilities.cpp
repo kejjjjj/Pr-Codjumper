@@ -198,3 +198,18 @@ pmove_t* PM_AddTouchEnt(pmove_t* pm, int groundEntityNum)
 	}
 	return pm;
 }
+Material* FindMaterialByName(const std::string& mtl)
+{
+	for (int i = 0; i < rgp->materialCount; i++) {
+
+		Material* material = rgp->sortedMaterials[i];
+		if (!material)
+			continue;
+
+
+		if (mtl.find(material->info.name) != std::string::npos)
+			return material;
+	}
+
+	return 0;
+}

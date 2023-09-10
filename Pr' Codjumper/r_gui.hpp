@@ -18,23 +18,27 @@ public:
 	void bottom_categories();
 	void right_categories();
 
-	void append_category(const Gui_MainCategory& category) { categories.push_back(category); if (categories.size() == 1) active_category = &categories.front(); };
+	void append_category(std::unique_ptr<Gui_MainCategory> category) {
+		categories.push_back(std::move(category)); 
+		if (categories.size() == 1) 
+			active_category = categories.front().get(); 
+	};
 
 	ivec2 main_category_first_image_position(const size_t numimages, float spacing) const noexcept;
-	void set_active(Gui_MainCategory& c) noexcept { active_category = &c; }
+	void set_active(Gui_MainCategory* c) noexcept { active_category = c; }
 private:
 
 	void visuals_create_hardcoded();
-	void visuals_create_strafes(Gui_SubCategory& category);
+	void visuals_create_strafes(std::unique_ptr<Gui_SubCategory>& category);
 
 	void automation_create_hardcoded();
-	void automation_create_movement(Gui_SubCategory& category);
-	void automation_create_fps(Gui_SubCategory& category);
+	void automation_create_movement(std::unique_ptr<Gui_SubCategory>& category);
+	void automation_create_fps(std::unique_ptr<Gui_SubCategory>& category);
 
 	void geometry_create_hardcoded();
-	void geometry_create_clipmap(Gui_SubCategory& category);
-	void geometry_create_terrain(Gui_SubCategory& category);
-	void geometry_create_preferences(Gui_SubCategory& category);
+	void geometry_create_clipmap(std::unique_ptr<Gui_SubCategory>& category);
+	void geometry_create_terrain(std::unique_ptr<Gui_SubCategory>& category);
+	void geometry_create_preferences(std::unique_ptr<Gui_SubCategory>& category);
 
 	void render_topbar();
 	void clip_bounds();
@@ -45,7 +49,7 @@ private:
 	void open() noexcept;
 	bool is_open = false;
 
-	std::list<Gui_MainCategory> categories;
+	std::list<std::unique_ptr<Gui_MainCategory>> categories;
 	Gui_MainCategory* active_category = 0;
 	ivec2 absolute_maxs;
 	ivec2 free_space;

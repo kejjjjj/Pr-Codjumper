@@ -34,6 +34,7 @@ void RB_RenderWinding(const winding2_t* w);
 void CM_FindRandomBrushByName();
 bool CM_BrushInView(const cbrush_t* brush, struct cplane_s* frustumPlanes, int numPlanes);
 void RB_ShowCollision(GfxViewParms* viewParms);
+void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFloat);
 
 inline std::list<winding2_t> brushWindings;
 

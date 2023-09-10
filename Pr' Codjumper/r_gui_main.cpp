@@ -56,10 +56,10 @@ void Gui_MainCategory::render_subcategories(const ivec2& pos, const ivec2& maxs)
 	int offs = 0;
 
 	for (auto& i : categories) {
-		i.render(permins, permaxs, active_category == &i, offs, &active_category);
-		permins.y += i.rect_height;
-		permaxs.y += i.rect_height;
-		offs += i.rect_height + 10;
+		i->render(permins, permaxs, active_category == i.get(), offs, &active_category);
+		permins.y += i->rect_height;
+		permaxs.y += i->rect_height;
+		offs += i->rect_height + 10;
 	}
 
 }

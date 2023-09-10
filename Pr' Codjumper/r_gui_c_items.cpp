@@ -1,7 +1,7 @@
 
 #include "pch.hpp"
 
-Gui_Item::Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::function<void(bool)>> onClicked, std::optional<std::shared_ptr<_slider>> sliderData, bool isCheckbox, bool isInputbox)
+Gui_Item::Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::function<void(bool)>> onClicked, std::optional<_slider> sliderData, bool isCheckbox, bool isInputbox)
 {
 	if (!ref) {
 		FatalError("Gui_Item(): invalid ref variable");
@@ -16,7 +16,7 @@ Gui_Item::Gui_Item(EvarBase* ref, const char* _tooltip, std::optional<std::funct
 		activation_event = onClicked.value();
 
 	if (sliderData.has_value()) {
-		slider = sliderData.value();
+		slider = std::shared_ptr<_slider>(new _slider(std::move(sliderData.value())));
 		return;
 	}
 
@@ -46,6 +46,18 @@ void Gui_Item::render()
 		ImGui::SetNextItemWidth(100);
 		if (ImGui::InputText(linked_variable->get_name().c_str(), (char*)linked_variable->get_raw(), 128) && activation_event)
 			activation_event(true);
+
+	}
+	else if (slider.get()) {
+		ImGui::SetNextItemWidth(100);
+		switch (slider->type) {
+		case sliderType::INT:
+			ImGui::SliderInt(linked_variable->get_name().c_str(), (int*)linked_variable->get_raw(), slider->integer.min, slider->integer.max);
+			break;
+		case sliderType::FLOAT:
+			ImGui::SliderFloat(linked_variable->get_name().c_str(), (float*)linked_variable->get_raw(), slider->value.min, slider->value.max);
+			break;
+		}
 
 	}
 
@@ -105,7 +117,17 @@ void Gui_CategoryItems::render_body()
 	wnd->AddRectFilled(body_mins, ivec2(body_mins.x + 200, body_mins.y + (400 - (body_mins.y - child_mins.y))), IM_COL32(33, 33, 33, 255), ImGui::GetStyle().WindowRounding, ImDrawFlags_RoundCornersBottom);
 
 	for (auto& i : items) {
-		i.render();
+		switch (i->get_type()) {
+		case GuiItemType::CHECKBOX:
+			dynamic_cast<Gui_ItemCheckbox*>(i.get())->render();
+			break;
+		case GuiItemType::INPUTBOX:
+			dynamic_cast<Gui_ItemInputText*>(i.get())->render();
+			break;
+		case GuiItemType::SLIDER_FLOAT:
+			dynamic_cast<Gui_ItemSliderFloat*>(i.get())->render();
+			break;
+		}
 	}
 
 
