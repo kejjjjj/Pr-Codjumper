@@ -63,3 +63,34 @@ bool fs::create_directory(const std::string& path)
 {
 	return _mkdir((path).c_str()) != -1;
 }
+
+std::list<std::string> fs::files_in_directory(const std::string& path)
+{
+	std::list<std::string> files;
+
+	if (!_fs::exists(path)) {
+		return {}; 
+	}
+
+	for (const auto& entry : _fs::directory_iterator(path)) {
+		if (entry.is_directory())
+			continue;
+
+		std::string str = entry.path().string();
+		files.push_back(std::move(str)); 
+	}
+
+	return (files); //compiler I hope you optimize this! 
+}
+bool fs::valid_file_name(const std::string& name)
+{
+	if (name.empty())
+		return false;
+
+	for (const auto& i : name) {
+		if (!std::isalnum(i) && i != '-' && i != '_' && i != ' ')
+			return false;
+
+	}
+	return true;
+}

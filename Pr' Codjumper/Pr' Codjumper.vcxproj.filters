@@ -85,6 +85,9 @@
     <Filter Include="Source Files\playback">
       <UniqueIdentifier>{e7edb095-8d7f-4268-a949-9ae550ff7c94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\tool\prediction">
+      <UniqueIdentifier>{f360c781-7bd5-4d18-b1f2-9068b2463fb3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -270,6 +273,18 @@
     <ClInclude Include="cl_client.hpp">
       <Filter>Source Files\cl</Filter>
     </ClInclude>
+    <ClInclude Include="scr_menuresponse.hpp">
+      <Filter>Source Files\scr</Filter>
+    </ClInclude>
+    <ClInclude Include="prediction_main.hpp">
+      <Filter>Source Files\tool\prediction</Filter>
+    </ClInclude>
+    <ClInclude Include="prediction_load.hpp">
+      <Filter>Source Files\tool\prediction</Filter>
+    </ClInclude>
+    <ClInclude Include="prediction_gen.hpp">
+      <Filter>Source Files\tool\prediction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -448,6 +463,21 @@
     </ClCompile>
     <ClCompile Include="cl_client.cpp">
       <Filter>Source Files\cl</Filter>
+    </ClCompile>
+    <ClCompile Include="scr_menuresponse.cpp">
+      <Filter>Source Files\scr</Filter>
+    </ClCompile>
+    <ClCompile Include="prediction_main.cpp">
+      <Filter>Source Files\tool\prediction</Filter>
+    </ClCompile>
+    <ClCompile Include="prediction_ui.cpp">
+      <Filter>Source Files\tool\prediction</Filter>
+    </ClCompile>
+    <ClCompile Include="prediction_load.cpp">
+      <Filter>Source Files\tool\prediction</Filter>
+    </ClCompile>
+    <ClCompile Include="prediction_gen.cpp">
+      <Filter>Source Files\tool\prediction</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -119,7 +119,7 @@ struct vec3
 	vec3 operator*(const vec3& v) const { return { x * v.x, y * v.y, z * v.z }; }
 	vec3 operator/(const vec3& v) const { return { x / v.x, y / v.y, z / v.z }; }
 	void operator=(const vec3& v) { x = v.x; y = v.y, z = v.z; }
-	void operator=(const float *v) { x = v[0]; y = v[1], z = v[2]; }
+	void operator=(const T *v) { x = v[0]; y = v[1], z = v[2]; }
 	std::basic_ostream<char, std::char_traits<char>> operator<< (const vec3& v) {};
 
 	vec3 operator+(const T& v) const { return { x + v, y + v, z + v }; }

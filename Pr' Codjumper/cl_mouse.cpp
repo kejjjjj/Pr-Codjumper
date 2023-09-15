@@ -9,8 +9,8 @@ void __cdecl do_stuff(clientActive_t* client, float* my, float* mx)
 	int v4; // ecx
 	int v5; // [esp+0h] [ebp-4h]
 
-
-	if (Dvar_FindMalleableVar("m_filter")->current.enabled)
+	static dvar_s* m_filter = Dvar_FindMalleableVar("m_filter");
+	if (m_filter->current.enabled)
 	{
 		v5 = client->mouseDy[0] + client->mouseDy[1];
 		*mx = (client->mouseDx[0] + client->mouseDx[1]) * 0.5;

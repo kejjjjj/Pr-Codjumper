@@ -2,159 +2,72 @@
 
 #include "pch.hpp"
 
-struct pm_controller_t
+struct prediction_state
 {
-
-	char forwardmove;
-	char rightmove;
-	int buttons;
-	int FPS;
-	int numLoops;
-
-	std::optional<fvec3> velocity;
-	std::optional<fvec3> origin;
-	std::optional<fvec3> viewangles;
-	fvec3 turnrate;
-
-	bool strafebot = false;
+	pmove_t pm;
+	pml_t pml;
+	playerState_s ps;
 };
-class PM_MovementSimulation
+
+
+enum class prediction_angle_enumerator
+{
+	FIXED_TURN,
+	FIXED_ANGLE,
+	STRAFEBOT,
+
+};
+
+class prediction_viewangle
 {
 public:
-	PM_MovementSimulation(pmove_t* pm, pml_t* pml, pm_controller_t&& controls);
-	PM_MovementSimulation(pmove_t* pm, pml_t* pml);
+	prediction_viewangle() = default;
+	virtual prediction_angle_enumerator get_type() const = 0;
+	virtual fvec3 get_deltas(pmove_t* pm, pml_t* pml, struct prediction_controller* controller) const = 0;
+ };
 
-	void SetController(pm_controller_t&& controls) { controller = std::make_unique<pm_controller_t>(std::move(controls)); }
+struct prediction_controller
+{
+	prediction_controller() = default;
+	char forwardmove = 127;
+	char rightmove = 0;
+	int32_t numInputs = 100;
+	int buttons = 0;
+	int FPS = 125;
+	fvec3 viewangles;
+	std::unique_ptr<prediction_viewangle> turntype;
+	prediction_angle_enumerator turntype_enum = prediction_angle_enumerator::FIXED_TURN;
 
-	void StartSimulation();
-
-	pmove_t* GetPM() noexcept { return &pm_og; }
-	pml_t* GetPML() noexcept { return &pml_og; }
-	pm_controller_t* GetController() noexcept { return controller.get(); }
-	PM_MovementSimulation() = delete;
-	PM_MovementSimulation(PM_MovementSimulation& other) = delete;
-	PM_MovementSimulation operator=(PM_MovementSimulation& other) = delete;
-private:
-
-	void PmoveSingle(pmove_t* pm, pml_t* pml);
-
-	pmove_t pm_og;
-	pml_t pml_og;
-	playerState_s ps;
-	std::unique_ptr<pm_controller_t> controller;
-	
-	void(__cdecl* PM_CheckLadderMove_)(pmove_t* pm, pml_t* pml) = ((void(__cdecl*)(pmove_t*, pml_t*))0x413A60);
-	void(__cdecl* PM_LadderMove_)(pmove_t* pm, pml_t* pml) = ((void(__cdecl*)(pmove_t*, pml_t*))0x413DD0);
-	void(__cdecl* PM_AdjustAimSpreadScale_)(pmove_t* pm, pml_t* pml) = ((void(__cdecl*)(pmove_t*, pml_t*))0x418870);
-	void(*PM_UpdateSprint_)(pmove_t* pm) = ((void(__cdecl*)(pmove_t*))0x40E6A0);
-	void(*PM_UpdateAimDownSightFlag_)(pmove_t* pm, pml_t* pml) = ((void(__cdecl*)(pmove_t*, pml_t*))0x416E60);
-	//void(*PM_Footsteps_)(pmove_t* pm, pml_t* pml) = ((void(__cdecl*)(pmove_t*, pml_t*))0x412180);
-	void PM_OverBounce(pmove_t* pm, pml_t* pml);
-
-	void PM_Footsteps_(pmove_t* pm, pml_t* pml)
-	{
-		__asm
-		{
-			push pml;
-			mov eax, pm;
-			mov esi, 0x412180;
-			call esi;
-			add esp, 0x4;
-		}
-	}
-	void PM_GroundTrace_(pmove_t* pm, pml_t* pml)
-	{
-		__asm
-		{
-			push pml;
-			push pm;
-			mov esi, 0x00410660;
-			call esi;
-			add esp, 0x8;
-		}
-	}
-	static void PM_DropTimers(playerState_s* ps, pml_t* pml)
-	{
-		uintptr_t fnc = 0x00412510;
-		__asm
-		{
-			mov eax, ps;
-			mov esi, pml;
-			call fnc;
-		}
-	}
-	static void PM_UpdatePronePitch(pml_t* pml, pmove_t* pm)
-	{
-		__asm
-		{
-			push pm;
-			mov edi, pml;
-			mov esi, 0x4136E0;
-			call esi;
-			add esp, 0x4;
-		}
-	}
-	static void Mantle_Move(playerState_s* ps, pmove_t* pm, pml_t* pml)
-	{
-		__asm
-		{
-			
-			mov edi, ps;
-			push pml;
-			push pm;
-			mov esi, 0x409000;
-			call esi;
-			add esp, 0x8;
-		}
-	}
-	static void PM_CheckDuck_(pmove_t* pm, pml_t* pml)
-	{
-		__asm
-		{
-			lea ecx, pml;
-			push ecx;
-			mov edi, pm;
-			mov esi, 0x410F70;
-			call esi;
-			add esp, 0x4;
-		}
-	}
-	static void PM_UpdatePlayerWalkingFlag_(pmove_t* pm) {
-		__asm
-		{
-			mov ecx, pm;
-			mov esi, 0x413A10;
-			call esi;
-
-		}
-	}
-	static void PM_Weapon(pmove_t* pm, pml_t* pml)
-	{
-		__asm
-		{
-			mov eax, pml;
-			mov ecx, pm;
-			mov esi, 0x0041A470;
-			call esi;
-		}
-	}
-	static void PM_UpdateViewAngles(playerState_s* ps, float msec, usercmd_s* cmd, char handler) {
-
-		__asm
-		{
-
-			movzx eax, handler;
-			mov esi, cmd;
-			push eax;
-			push esi;
-			push msec;
-			mov eax, ps;
-			mov esi, 0x413580;
-			call esi;
-			add esp, 0xC;
-		}
-
-	}
-
+	prediction_controller(const prediction_controller&) = delete;
+	prediction_controller& operator=(const prediction_controller&) = delete;
 };
- 
+
+class prediction_viewangle_fixed_turn : public prediction_viewangle
+{
+public:
+	prediction_angle_enumerator get_type() const override 
+	{
+		return prediction_angle_enumerator::FIXED_TURN;
+	}
+	fvec3 get_deltas(pmove_t* pm, pml_t* pml, struct prediction_controller* controller) const override
+	{
+		return {up, -right, 0.f};
+	}
+
+	float right;
+	float up;
+};
+
+struct simulation_results
+{
+	ivec3 cmd_angles;
+	char weapon;
+	char offhand;
+	fvec3 viewangles;
+	fvec3 origin;
+	fvec3 velocity;
+	fvec3 mins, maxs;
+	float camera_yaw = 0;
+};
+
+simulation_results PmoveSingleSimulation(pmove_t* pm, pml_t* pml, prediction_controller* controller);

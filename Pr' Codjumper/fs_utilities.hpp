@@ -25,9 +25,9 @@ namespace fs
 	void create_file(const std::string& path);
 	bool create_directory(const std::string& path);
 
-
+	std::list<std::string> files_in_directory(const std::string& path);
 
 	inline bool directory_exists(const std::string& d) { return _fs::exists(d); }
 	inline bool file_exists(const std::string& f) { return _fs::exists(f); }
-
+	bool valid_file_name(const std::string& name);
 }

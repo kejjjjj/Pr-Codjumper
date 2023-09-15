@@ -2,6 +2,25 @@
 
 #include "pch.hpp"
 
+struct playback_cmd
+{
+	int serverTime;
+	int angles[3];
+	int32_t buttons;
+	char forwardmove;
+	char rightmove;
+	int FPS;
+	char weapon;
+	char offhand;
+	fvec3 viewangles;
+	fvec3 origin;
+	fvec3 velocity;
+	fvec3 mins, maxs;
+	float camera_yaw;
+
+};
+
+
 struct recorder_cmd
 {
 	int serverTime;
@@ -24,9 +43,18 @@ public:
 		static Playback instance;
 		return instance;
 	}
-	void Record(usercmd_s* cmd, const int FPS) noexcept;
-	void StopRecording() noexcept { recording = false; }
+	//void Record(usercmd_s* cmd, const int FPS) noexcept;
+	//void StopRecording() noexcept { recording = false; }
 
+	void ExternalPlayback(const std::list<playback_cmd>& cmds) { 
+		clear();
+		
+		for (auto& i : cmds) 
+			recorder_sequence.push_back(i); 
+
+		StopPlayback();
+
+	}
 	void StartPlayback() noexcept;
 	void StartRecording(int* angles) noexcept { VectorCopy(angles, recordingAngle);  recording = true; state = *ps_loc; }
 	bool isRecording() const noexcept { return recording; }
@@ -43,16 +71,16 @@ public:
 	playerState_s state;
 
 private:
-	std::list<recorder_cmd> recorder_sequence;
+	std::list<playback_cmd> recorder_sequence;
 	int frame = 0;
 	bool refresh_start_time = true;
 
 	void iterateIterator(const size_t amount) { return refresh_start_time = true, std::advance(it, amount); }
-	recorder_cmd* CurrentCmd() const;
+	playback_cmd* CurrentCmd() const;
 
 	bool playback = false;
 	bool recording = false;
-	std::list<recorder_cmd>::iterator it;
+	std::list<playback_cmd>::iterator it;
 	int recordingAngle[3]{};
 	int refTime = 0;
 

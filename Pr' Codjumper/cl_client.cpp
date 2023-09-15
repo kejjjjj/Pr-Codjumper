@@ -22,36 +22,40 @@ void CL_FinishMove(usercmd_s* cmd)
 	static dvar_s* com_maxfps = Dvar_FindMalleableVar("com_maxfps");
 	static bool playbackDelay = false;
 	static DWORD ms = Sys_MilliSeconds();
-
+	static Prediction_Init& prediction = Prediction_Init::getInstance();
 
 	//CL_FixServerTime(cmd);
 
-	if (GetAsyncKeyState(VK_NUMPAD4) & 1) {
-		if (!playback.isRecording()) {
-			playback.clear();
-			Com_Printf(CON_CHANNEL_OBITUARY, "record!\n");
-			playback.StartRecording(cmd->angles);
-		}
-		else {
-			Com_Printf(CON_CHANNEL_OBITUARY, "stop!\n");
-			playback.StopRecording();
-		}
-	}
-	
-	if (playback.isRecording()) {
-		playback.Record(cmd, com_maxfps->current.integer);
-	}
-	else if (GetAsyncKeyState(VK_NUMPAD6) & 1) {
-		if (!playback.IsPlayback() && !playbackDelay) {
+	//if (GetAsyncKeyState(VK_NUMPAD4) & 1) {
+	//	if (!playback.isRecording()) {
+	//		playback.clear();
+	//		Com_Printf(CON_CHANNEL_OBITUARY, "record!\n");
+	//		playback.StartRecording(cmd->angles);
+	//	}
+	//	else {
+	//		Com_Printf(CON_CHANNEL_OBITUARY, "stop!\n");
+	//		playback.StopRecording();
+	//	}
+	//}
+	//
+	//if (playback.isRecording()) {
+	//	playback.Record(cmd, com_maxfps->current.integer);
+	//}
+	/*else */if (GetAsyncKeyState(VK_NUMPAD6) & 1) {
+		if (!playback.IsPlayback() && !playbackDelay && prediction.ProjectExists()) {
 			
+			playback.ExternalPlayback(prediction.get_playback());
+			playback.state = prediction.get_entry_state();
+			*ps_loc = playback.state;
+			cgs->predictedPlayerState = *ps_loc;
 
 
 			ms = Sys_MilliSeconds();
 			playback.StartPlayback();
 			playbackDelay = true;
 
-			cgs->predictedPlayerState = playback.state;
-			*ps_loc = playback.state;
+			//cgs->predictedPlayerState = playback.state;
+			//*ps_loc = playback.state;
 			auto& it = playback.getIterator().get();
 			
 			cmd->angles[0] = it->angles[0];

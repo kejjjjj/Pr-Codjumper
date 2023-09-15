@@ -80,10 +80,10 @@ void Renderer::end_frame()
 }
 void Renderer::create_theme(const float transparency)
 {
-	const ImVec4 widget_color = ImVec4(200.f / 255, 8.f / 255, 11.f / 255, transparency);
-	const ImVec4 main_color = ImVec4(28.f / 255, 28.f / 255, 28.f / 255, transparency);
-	const ImVec4 window_color = ImVec4(42.f / 255, 42.f / 255, 42.f / 255, transparency);
-	const ImVec4 widget_active = ImVec4(200.f / 255, 8.f / 255, 11.f / 255, transparency);
+	const ImVec4 widget_color = ImVec4(127.f / 255, 21.f / 255, 60.f / 255, transparency);
+	const ImVec4 main_color = ImVec4(30.f / 255, 30.f / 255, 41.f / 255, transparency);
+	const ImVec4 window_color = ImVec4(33.f / 255, 34.f / 255, 51.f / 255, transparency);
+	const ImVec4 widget_active = ImVec4(40.f / 255, 40.f / 255, 40.f / 255, transparency);
 	const ImVec4 separator_color = ImVec4(117.f / 255, 22.f / 255, 46. / 255, transparency);
 
 	auto& style = ImGui::GetStyle();

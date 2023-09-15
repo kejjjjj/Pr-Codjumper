@@ -102,6 +102,36 @@ void ImGui::TextCentered(const char* label, ...)
 
     ImGui::Text(v2);
 }
+void ImGui::TextCenteredVertical(const char* label, ...)
+{
+    char v2[4096];
+    va_list va;
+
+    va_start(va, label);
+    _vsnprintf_s(v2, 0x1000u, label, va);
+    v2[4095] = 0;
+
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    fvec2 size = ImGui::CalcTextSize(v2);
+    size += {style.FramePadding.x * 2.0f, style.FramePadding.y * 2.0f};
+
+    fvec2 avail = ImGui::GetContentRegionAvail();
+    fvec2 off = { (avail.x - size.x) * .5f, (avail.y - size.y) * .5f };
+
+    if (off.x > 0.0f)
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off.x);
+    if (off.y > 0.0f)
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + off.y);
+
+    ImGui::Text(v2);
+}
+bool ImGui::IsKeyPressed(const BYTE key)
+{
+    auto& io = ImGui::GetIO();
+
+    return io.KeysDownDuration[key] == 0.f;
+}
 bool ImGui::IsHovered(ImVec2 mins, ImVec2 maxs)
 {
     tagPOINT p;

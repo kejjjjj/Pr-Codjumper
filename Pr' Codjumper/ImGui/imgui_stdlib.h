@@ -18,6 +18,9 @@ namespace ImGui
 
     IMGUI_API bool ButtonCentered(const char* label, float alignment = 0.5f, ImVec2 size = ImVec2(0, 0));
     IMGUI_API void TextCentered(const char* label, ...);
+    IMGUI_API void TextCenteredVertical(const char* label, ...);
+    IMGUI_API bool IsKeyPressed(const BYTE key);
+
     IMGUI_API bool IsHovered(ImVec2 mins, ImVec2 maxs);
     IMGUI_API bool IsClicked(ImVec2 mins, ImVec2 maxs);
 }

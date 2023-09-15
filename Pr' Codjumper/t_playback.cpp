@@ -1,32 +1,32 @@
 #include "pch.hpp"
 
-
-void Playback::Record(usercmd_s* cmd, const int FPS) noexcept
-{
-	if (recording == false)
-		return;
-
-	recorder_cmd rcmd;
-
-	VectorCopy(cmd->angles, rcmd.angles);
-	//VectorSubtract(cmd->angles, recordingAngle, rcmd.angles);
-	rcmd.buttons = cmd->buttons;
-	rcmd.forwardmove = cmd->forwardmove;
-	rcmd.rightmove = cmd->rightmove;
-	rcmd.FPS = FPS;
-	rcmd.offhand = cmd->offHandIndex;
-	rcmd.origin.x = clients->cgameOrigin[0];
-	rcmd.origin.y = clients->cgameOrigin[1];
-	rcmd.origin.z = clients->cgameOrigin[2];
-	rcmd.serverTime = cmd->serverTime;
-	rcmd.velocity = fabs(clients->cgameVelocity[0] * clients->cgameVelocity[0] + clients->cgameVelocity[1] * clients->cgameVelocity[1]);
-	rcmd.weapon = cmd->weapon;
-
-	VectorCopy(clients->cgameViewangles, rcmd.viewangles);
-
-	recorder_sequence.push_back(std::move(rcmd));
-
-}
+//
+//void Playback::Record(usercmd_s* cmd, const int FPS) noexcept
+//{
+//	if (recording == false)
+//		return;
+//
+//	recorder_cmd rcmd;
+//
+//	VectorCopy(cmd->angles, rcmd.angles);
+//	//VectorSubtract(cmd->angles, recordingAngle, rcmd.angles);
+//	rcmd.buttons = cmd->buttons;
+//	rcmd.forwardmove = cmd->forwardmove;
+//	rcmd.rightmove = cmd->rightmove;
+//	rcmd.FPS = FPS;
+//	rcmd.offhand = cmd->offHandIndex;
+//	rcmd.origin.x = clients->cgameOrigin[0];
+//	rcmd.origin.y = clients->cgameOrigin[1];
+//	rcmd.origin.z = clients->cgameOrigin[2];
+//	rcmd.serverTime = cmd->serverTime;
+//	rcmd.velocity = fabs(clients->cgameVelocity[0] * clients->cgameVelocity[0] + clients->cgameVelocity[1] * clients->cgameVelocity[1]);
+//	rcmd.weapon = cmd->weapon;
+//
+//	VectorCopy(clients->cgameViewangles, rcmd.viewangles);
+//
+//	recorder_sequence.push_back(std::move(rcmd));
+//
+//}
 
 
 void Playback::StartPlayback() noexcept
@@ -74,7 +74,7 @@ void Playback::doPlayback(usercmd_s* cmd) noexcept
 	}
 
 }
-recorder_cmd* Playback::CurrentCmd() const {
+playback_cmd* Playback::CurrentCmd() const {
 	if (!playback)
 		return 0;
 

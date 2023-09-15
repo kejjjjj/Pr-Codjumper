@@ -454,3 +454,143 @@ void Mantle_Check(pmove_t* pm, pml_t* pml)
 
 	return;
 }
+
+void PM_Footsteps_(pmove_t* pm, pml_t* pml)
+{
+	__asm
+	{
+		push pml;
+		mov eax, pm;
+		mov esi, 0x412180;
+		call esi;
+		add esp, 0x4;
+	}
+}
+void PM_GroundTrace_(pmove_t* pm, pml_t* pml)
+{
+	__asm
+	{
+		push pml;
+		push pm;
+		mov esi, 0x00410660;
+		call esi;
+		add esp, 0x8;
+	}
+}
+void PM_DropTimers(playerState_s* ps, pml_t* pml)
+{
+	uintptr_t fnc = 0x00412510;
+	__asm
+	{
+		mov eax, ps;
+		mov esi, pml;
+		call fnc;
+	}
+}
+void PM_UpdatePronePitch(pml_t* pml, pmove_t* pm)
+{
+	__asm
+	{
+		push pm;
+		mov edi, pml;
+		mov esi, 0x4136E0;
+		call esi;
+		add esp, 0x4;
+	}
+}
+void Mantle_Move(playerState_s* ps, pmove_t* pm, pml_t* pml)
+{
+	__asm
+	{
+
+		mov edi, ps;
+		push pml;
+		push pm;
+		mov esi, 0x409000;
+		call esi;
+		add esp, 0x8;
+	}
+}
+void PM_CheckDuck_(pmove_t* pm, pml_t* pml)
+{
+	__asm
+	{
+		lea ecx, pml;
+		push ecx;
+		mov edi, pm;
+		mov esi, 0x410F70;
+		call esi;
+		add esp, 0x4;
+	}
+}
+void PM_UpdatePlayerWalkingFlag_(pmove_t* pm) {
+	__asm
+	{
+		mov ecx, pm;
+		mov esi, 0x413A10;
+		call esi;
+
+	}
+}
+void PM_Weapon(pmove_t* pm, pml_t* pml)
+{
+	__asm
+	{
+		mov eax, pml;
+		mov ecx, pm;
+		mov esi, 0x0041A470;
+		call esi;
+	}
+}
+void _PM_UpdateViewAngles(playerState_s* ps, float msec, usercmd_s* cmd, char handler) {
+
+	__asm
+	{
+
+		movzx eax, handler;
+		mov esi, cmd;
+		push eax;
+		push esi;
+		push msec;
+		mov eax, ps;
+		mov esi, 0x413580;
+		call esi;
+		add esp, 0xC;
+	}
+
+}
+void PM_OverBounce(pmove_t* pm, pml_t* pml)
+{
+	vec3_t move;
+
+	move[0] = pm->ps->origin[0] - pml->previous_origin[0];
+	move[1] = pm->ps->origin[1] - pml->previous_origin[1];
+	move[2] = pm->ps->origin[2] - pml->previous_origin[2];
+
+	float dot = move[2] * move[2] + move[1] * move[1] + move[0] * move[0];
+	float dot_div_frametime = dot / (pml->frametime * pml->frametime);
+	float dot_speed = pm->ps->velocity[2] * pm->ps->velocity[2] + pm->ps->velocity[1] * pm->ps->velocity[1] + pm->ps->velocity[0] * pm->ps->velocity[0];
+
+	if (dot_speed * 0.25 > dot_div_frametime)
+	{
+		//Com_Printf(CON_CHANNEL_OBITUARY, "possible overbounce!\n");
+		float inGameFramesPerSecond = 1.0 / pml->frametime;
+		pm->ps->velocity[0] = inGameFramesPerSecond * move[0];
+		pm->ps->velocity[1] = inGameFramesPerSecond * move[1];
+		pm->ps->velocity[2] = inGameFramesPerSecond * move[2];
+	}
+
+	float clampedFrametime = std::clamp(pml->frametime, 0.f, 1.f);
+
+	float diffX = pm->ps->velocity[0] - pm->ps->oldVelocity[0];
+	float diffY = pm->ps->velocity[1] - pm->ps->oldVelocity[1];
+
+	float frameX = clampedFrametime * diffX;
+	float frameY = clampedFrametime * diffY;
+
+	pm->ps->oldVelocity[0] = pm->ps->oldVelocity[0] + frameX;
+	pm->ps->oldVelocity[1] = pm->ps->oldVelocity[1] + frameY;
+
+
+	return;
+}

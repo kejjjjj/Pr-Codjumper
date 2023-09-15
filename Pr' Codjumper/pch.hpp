@@ -88,6 +88,9 @@ typedef vec_t vec4_t[4];
 
 #include "ImGui/implot/implot.h"
 
+#include "typedefs.hpp"
+
+
 #include "sys_tools.hpp"
 
 
@@ -100,7 +103,6 @@ typedef vec_t vec4_t[4];
 #include "evar.hpp"
 
 #include "fs_utilities.hpp"
-#include "typedefs.hpp"
 #include "koukku.hpp"
 #include "dvar.hpp"
 #include "commands.hpp"
@@ -127,17 +129,23 @@ typedef vec_t vec4_t[4];
 #include "r_gui_main.hpp"
 #include "r_gui.hpp"
 
+
 #include "sv_ccmds.hpp"
 
 #include "scr_main.hpp"
 #include "scr_utilities.hpp"
 #include "scr_functions.hpp"
+#include "scr_menuresponse.hpp"
 
 #include "rb_endscene.hpp"
 
 #include "t_playback.hpp"
 #include "t_anglehelpers.hpp"
 #include "t_movement.hpp"
+
+#include "prediction_gen.hpp"
+#include "prediction_main.hpp"
+#include "prediction_load.hpp"
 
 #include "com_channel.hpp"
 

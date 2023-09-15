@@ -702,43 +702,6 @@ void RB_RenderWinding(const winding2_t* w)
 
 }
 
-void CM_FindRandomBrushByName()
-{
-	static bool show_all_triggers = false;
-
-	if (cmd_args->argc[cmd_args->nesting] != 2) {
-		if (!show_all_triggers)
-			Com_Printf(CON_CHANNEL_CONSOLEONLY, "usage: showbrush <material>");
-		show_all_triggers = false;
-
-		return;
-	}
-	auto name = *(cmd_args->argv[cmd_args->nesting] + 1);
-	show_all_triggers = true;
-
-
-	int idx = int(random(cm->numBrushes));
-	while (!&cm->brushes[idx] ||
-		std::string(cm->materials[cm->brushes[idx].axialMaterialNum[0][0]].material).find(name) == std::string::npos) {
-		idx = int(random(cm->numBrushes));
-	}
-
-	brushWindings.clear();
-	
-
-
-	for (int i = 0; i < cm->numBrushes; i++) {
-
-		if (std::string(cm->materials[cm->brushes[i].axialMaterialNum[0][0]].material).find(name) == std::string::npos)
-			continue;
-			
-
-		CM_GetPolys(&cm->brushes[i]);
-	}
-	
-
-	//VectorCopy(cm->brushes[idx].maxs, ps_loc->origin);
-}
 bool CM_BrushInView(const cbrush_t* brush, struct cplane_s* frustumPlanes, int numPlanes)
 {
 	if (numPlanes <= 0)

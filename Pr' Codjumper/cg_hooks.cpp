@@ -36,6 +36,8 @@ void CG_CreateHooks()
 	hooktable.insert(hookEnums_e::HOOK_CL_MOUSEMOVE, hook::hookobj<void*>(0x463400, CL_GetMouseMovement, TRUE));
 	hooktable.insert(hookEnums_e::HOOK_CL_FINISHMOVE, hook::hookobj<void*>(0x463A60, CL_FinishMove, TRUE));
 
+	hooktable.insert(hookEnums_e::HOOK_SCR_SCRIPTMENURESPONSE, hook::hookobj<void*>(0x54DE59, Script_ScriptMenuResponse, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_SCR_OPENSCRIPTMENU, hook::hookobj<void*>(0x46D4CF, Script_OpenScriptMenu, TRUE));
 
 }
 void CG_ReleaseHooks()

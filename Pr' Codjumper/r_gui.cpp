@@ -49,11 +49,11 @@ void Gui::render()
 	if (!is_open)
 		return;
 
-	if (GetAsyncKeyState(VK_ESCAPE) & 1)
-		return close();
 
 	ImGui::Begin("cj", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar/*ImGuiWindowFlags_AlwaysAutoResize*/);
-
+	
+	if (ImGui::IsKeyPressed(VK_ESCAPE))
+		return close();
 
 	render_topbar();
 	left_categories();

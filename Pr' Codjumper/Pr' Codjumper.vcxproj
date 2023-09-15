@@ -193,6 +193,9 @@
     <ClInclude Include="mh\trampoline.h" />
     <ClInclude Include="misc_tools.hpp" />
     <ClInclude Include="pch.hpp" />
+    <ClInclude Include="prediction_gen.hpp" />
+    <ClInclude Include="prediction_load.hpp" />
+    <ClInclude Include="prediction_main.hpp" />
     <ClInclude Include="rb_endscene.hpp" />
     <ClInclude Include="resources.hpp" />
     <ClInclude Include="r_drawtools.hpp" />
@@ -203,6 +206,7 @@
     <ClInclude Include="r_renderer.hpp" />
     <ClInclude Include="scr_functions.hpp" />
     <ClInclude Include="scr_main.hpp" />
+    <ClInclude Include="scr_menuresponse.hpp" />
     <ClInclude Include="scr_utilities.hpp" />
     <ClInclude Include="sv_ccmds.hpp" />
     <ClInclude Include="sys_tools.hpp" />
@@ -303,6 +307,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="prediction_gen.cpp" />
+    <ClCompile Include="prediction_load.cpp" />
+    <ClCompile Include="prediction_ui.cpp" />
     <ClCompile Include="rb_endscene.cpp" />
     <ClCompile Include="resources.cpp" />
     <ClCompile Include="r_drawtools.cpp" />
@@ -317,12 +324,14 @@
     <ClCompile Include="r_renderer.cpp" />
     <ClCompile Include="scr_functions.cpp" />
     <ClCompile Include="scr_main.cpp" />
+    <ClCompile Include="scr_menuresponse.cpp" />
     <ClCompile Include="scr_utilities.cpp" />
     <ClCompile Include="sv_ccmds.cpp" />
     <ClCompile Include="sys_tools.cpp" />
     <ClCompile Include="t_anglehelpers.cpp" />
     <ClCompile Include="t_movement.cpp" />
     <ClCompile Include="t_playback.cpp" />
+    <ClCompile Include="prediction_main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

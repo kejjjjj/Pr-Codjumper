@@ -49,7 +49,7 @@ namespace cg
 	inline unsigned int* g_poolSize = reinterpret_cast<unsigned int*>(0x7263A0);
 
 	inline int* vertexCount = reinterpret_cast<int*>(0xD2B082C);
-	inline void* frontEndDataOut = reinterpret_cast<void*>(0xCC9827C);
+	inline GfxBackEndData* frontEndDataOut = reinterpret_cast<GfxBackEndData*>(0xCC9827C);
 
 	inline char* initStringDvarValue = reinterpret_cast<char*>(0x6BFEA7);
 
