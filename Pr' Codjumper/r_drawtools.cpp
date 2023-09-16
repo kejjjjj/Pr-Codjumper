@@ -352,3 +352,152 @@ void R_DrawLine(vec3_t pointA, vec3_t pointB, vec4_t col)
 	ImGui::GetBackgroundDrawList()->AddLine(a.value(), b.value(), IM_COL32(col[0], col[1], col[2], col[3]), 3);
 
 }
+
+box_s::box_s(const fvec3& origin, const fvec3& mins, const fvec3& maxs)
+{
+	//box_s box{};
+
+	fvec3 lowA, lowB, lowC, lowD;
+	fvec3 highA, highB, highC, highD;
+
+	lowA.x = origin.x - mins.x;
+	lowA.y = origin.y - mins.y;
+	lowA.z = origin.z - mins.z;
+
+	lowB.x = origin.x + mins.x;
+	lowB.y = origin.y + mins.y;
+	lowB.z = origin.z - mins.z;
+
+	lowC.x = origin.x - mins.x;
+	lowC.y = origin.y + mins.y;
+	lowC.z = origin.z - mins.z;
+
+	lowD.x = origin.x + mins.x;
+	lowD.y = origin.y - mins.y;
+	lowD.z = origin.z - mins.z;
+
+	highA.x = lowA.x;
+	highA.y = lowA.y;
+	highA.z = origin.z + maxs.z;
+
+	highB.x = lowB.x;
+	highB.y = lowB.y;
+	highB.z = origin.z + maxs.z;
+
+	highC.x = lowC.x;
+	highC.y = lowC.y;
+	highC.z = origin.z + maxs.z;
+
+	highD.x = lowD.x;
+	highD.y = lowD.y;
+	highD.z = origin.z + maxs.z;
+
+	this->lowA = WorldToScreen(lowA);
+	this->lowB = WorldToScreen(lowB);
+	this->lowC = WorldToScreen(lowC);
+	this->lowD = WorldToScreen(lowD);
+
+	this->highA= WorldToScreen(highA);
+	this->highB = WorldToScreen(highB);
+	this->highC = WorldToScreen(highC);
+	this->highD = WorldToScreen(highD);
+
+	//return box;
+}
+void box_s::R_DrawConstructedBoxEdges(vec4_t col) const
+{
+	if (!ImGui::GetCurrentContext())
+		return;
+
+	auto& low_a = lowA.has_value() ? lowA.value() : 0;
+	auto& low_b = lowB.has_value() ? lowB.value() : 0;
+	auto& low_c = lowC.has_value() ? lowC.value() : 0;
+	auto& low_d = lowD.has_value() ? lowD.value() : 0;
+
+	auto& high_a = highA.has_value() ? highA.value() : 0;
+	auto& high_b = highB.has_value() ? highB.value() : 0;
+	auto& high_c = highC.has_value() ? highC.value() : 0;
+	auto& high_d = highD.has_value() ? highD.value() : 0;
+
+
+	if (lowA && lowC)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_a.x, low_a.y), ImVec2(low_c.x, low_c.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (lowB && lowD)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_b.x, low_b.y), ImVec2(low_d.x, low_d.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (lowC && lowB)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_c.x, low_c.y), ImVec2(low_b.x, low_b.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (lowD && lowA)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_d.x, low_d.y), ImVec2(low_a.x, low_a.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (highA && highC)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(high_a.x, high_a.y), ImVec2(high_c.x, high_c.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (highB && highD)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(high_b.x, high_b.y), ImVec2(high_d.x, high_d.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (highC && highB)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(high_c.x, high_c.y), ImVec2(high_b.x, high_b.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (highD && highA)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(high_d.x, high_d.y), ImVec2(high_a.x, high_a.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (lowA && highA)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_a.x, low_a.y), ImVec2(high_a.x, high_a.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (lowB && highB)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_b.x, low_b.y), ImVec2(high_b.x, high_b.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (lowC && highC)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_c.x, low_c.y), ImVec2(high_c.x, high_c.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+
+	if (lowD && highD)
+		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_d.x, low_d.y), ImVec2(high_d.x, high_d.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+}
+void box_s::R_DrawConstructedBox(vec4_t col) const
+{
+	if (!ImGui::GetCurrentContext())
+		return;
+
+	auto& low_a = lowA.has_value() ? lowA.value() : 0;
+	auto& low_b = lowB.has_value() ? lowB.value() : 0;
+	auto& low_c = lowC.has_value() ? lowC.value() : 0;
+	auto& low_d = lowD.has_value() ? lowD.value() : 0;
+
+	auto& high_a = highA.has_value() ? highA.value() : 0;
+	auto& high_b = highB.has_value() ? highB.value() : 0;
+	auto& high_c = highC.has_value() ? highC.value() : 0;
+	auto& high_d = highD.has_value() ? highD.value() : 0;
+
+	if (lowA && highC && lowC)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(low_a.x, low_a.y), ImVec2(high_c.x, high_c.y), ImVec2(low_c.x, low_c.y), IM_COL32(col[0], col[1], col[2], col[3]));
+	if (lowA && highA && highC)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(high_a.x, high_a.y), ImVec2(low_a.x, low_a.y), ImVec2(high_c.x, high_c.y), IM_COL32(col[0], col[1], col[2], col[3]));
+
+	if (lowB && highD && lowD)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(low_b.x, low_b.y), ImVec2(high_d.x, high_d.y), ImVec2(low_d.x, low_d.y), IM_COL32(col[0], col[1], col[2], col[3]));
+	if (lowB && highB && highD)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(high_b.x, high_b.y), ImVec2(low_b.x, low_b.y), ImVec2(high_d.x, high_d.y), IM_COL32(col[0], col[1], col[2], col[3]));
+
+	if (lowC && highB && lowB)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(low_c.x, low_c.y), ImVec2(high_b.x, high_b.y), ImVec2(low_b.x, low_b.y), IM_COL32(col[0], col[1], col[2], col[3]));
+	if (lowC && highC && highB)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(high_c.x, high_c.y), ImVec2(low_c.x, low_c.y), ImVec2(high_b.x, high_b.y), IM_COL32(col[0], col[1], col[2], col[3]));
+
+	if (lowD && highA && lowA)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(low_d.x, low_d.y), ImVec2(high_a.x, high_a.y), ImVec2(low_a.x, low_a.y), IM_COL32(col[0], col[1], col[2], col[3]));
+	if (lowD && highD && highA)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(high_d.x, high_d.y), ImVec2(low_d.x, low_d.y), ImVec2(high_a.x, high_a.y), IM_COL32(col[0], col[1], col[2], col[3]));
+
+	if (highA && highB && highC)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(high_a.x, high_a.y), ImVec2(high_b.x, high_b.y), ImVec2(high_c.x, high_c.y), IM_COL32(col[0], col[1], col[2], col[3]));
+	if (highA && highB && highD)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(high_a.x, high_a.y), ImVec2(high_b.x, high_b.y), ImVec2(high_d.x, high_d.y), IM_COL32(col[0], col[1], col[2], col[3]));
+
+	if (lowA && lowB && lowC)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(low_a.x, low_a.y), ImVec2(low_b.x, low_b.y), ImVec2(low_c.x, low_c.y), IM_COL32(col[0], col[1], col[2], col[3]));
+	if (lowA && lowB && lowD)
+		ImGui::GetBackgroundDrawList()->AddTriangleFilled(ImVec2(low_a.x, low_a.y), ImVec2(low_b.x, low_b.y), ImVec2(low_d.x, low_d.y), IM_COL32(col[0], col[1], col[2], col[3]));
+}

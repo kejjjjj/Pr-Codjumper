@@ -7,6 +7,9 @@ void Resources::initialize()
 	create_subdirectory("resources\\fonts");
 	create_subdirectory("resources\\images");
 
+	create_subdirectory("prediction_runs");
+
+
 	//recreate_materials();
 }
 

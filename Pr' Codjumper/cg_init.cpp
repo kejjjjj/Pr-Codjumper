@@ -13,7 +13,9 @@ void CG_Init()
     decltype(auto) resources = Resources::getInstance();
     decltype(auto) gui = Gui::getInstance();
 
-    
+    hook::nop(0x04122D2); //PM_SetStrafeCondition 
+    hook::nop(0x4056DF); //BG_GetConditionBit
+    hook::write_addr(0x405360, "\xC3", 1); //BG_EvaluateConditions
 
     if (!renderer.initialize())
         return;

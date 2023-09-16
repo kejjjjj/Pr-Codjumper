@@ -44,6 +44,8 @@ typedef vec_t vec4_t[4];
 
 #define NOT_SERVER (*(int*)0x0797520 == 0)
 
+#define TAS_FS_FILEVERSION 1
+
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 

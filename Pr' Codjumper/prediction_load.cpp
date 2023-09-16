@@ -9,11 +9,12 @@
 //
 //}
 
-void Prediction_Init::Init(const std::string& mapname)
+void Prediction_Init::Init(const std::string& _mapname)
 {
 	if (is_loaded)
 		return;
 
+	mapname = _mapname;
 	const std::string directory = fs::root_path() + "\\prediction_runs\\" + mapname;
 
 	if (!fs::directory_exists(directory)) {
@@ -24,15 +25,18 @@ void Prediction_Init::Init(const std::string& mapname)
 
 	projects = fs::files_in_directory(directory);
 
-	if (projects.empty()) {
-		empty_directory = true;
-		return;
-	}
 
 	//remove all unrelated files from the list
 	projects.erase(std::remove_if(projects.begin(), projects.end(), [](const std::string& project) {
 		return project.find(".predicted") == std::string::npos;
 		}), projects.end());
+
+	if (projects.empty()) {
+		empty_directory = true;
+		return;
+	}
+	projects.sort();
+
 }
 void Prediction_Init::UI_CreateNew()
 {
@@ -95,8 +99,14 @@ void Prediction_Init::UI_CreateNew()
 
 		is_loaded = true;
 
+		const auto directory = (fs::root_path() + "\\prediction_runs\\" + mapname);
+		const auto full_path = directory + "\\" + project_name + ".predicted";
 
-		prediction = std::unique_ptr<Prediction>(new Prediction(std::string(project_name), pm_glob, pml_glob));
+		fs::create_directory(directory);
+		fs::create_file(full_path);
+
+		prediction = std::unique_ptr<Prediction>(new Prediction(full_path, project_name, pm_glob, pml_glob));
+
 		close();
 	}
 
@@ -119,6 +129,34 @@ void Prediction_Init::UI_SelectProject()
 
 	if (empty_directory)
 		return UI_CreateNew();
+	
+	const bool clicked = io.MouseDown[0];
+	int item = 1;
+	auto& style = ImGui::GetStyle();
+	for (auto& i : projects) {
+		
+		const auto name = fs::get_file_name(i);
+		const auto extension = fs::get_extension(i);
+		const std::string shortname = (name.substr(0, name.size() - extension.size()));
+
+
+		ImGui::Text("%i. %s", item, shortname.c_str());
+		fvec2 mins = ImGui::GetItemRectMin();
+		fvec2 maxs = { ImGui::GetWindowPos().x + ImGui::GetWindowSize().x - style.FramePadding.x*2 - style.ItemSpacing.x, ImGui::GetItemRectMax().y };
+
+		if (MouseHovered(mins, maxs)) {
+			ImGui::GetForegroundDrawList()->AddRectFilled(mins, maxs, IM_COL32(255, 200, 157, 157));
+
+			if (clicked) {
+				prediction = std::unique_ptr<Prediction>(new Prediction(i));
+				is_loaded = true;
+				close();
+				break;
+			}
+		}
+
+		item++;
+	}
 
 	ImGui::End();
 	
@@ -180,4 +218,11 @@ void Prediction_Init::Hud_Render() {
 
 	prediction->Hud_Render();
 
+}
+void Prediction_Init::Hud_EngineRender()
+{
+	if (!ProjectExists())
+		return;
+
+	prediction->Hud_EngineRender();
 }

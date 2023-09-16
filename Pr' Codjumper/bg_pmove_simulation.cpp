@@ -92,34 +92,38 @@ simulation_results PmoveSingleSimulation(pmove_t* pm, pml_t* pml, prediction_con
 
 
 	pml->msec = 1000 / ((controller->FPS == 0) ? 1 : controller->FPS); //simulate fps
+
+	if (controller->autofps)
+		pml->msec = 1000 / T::Movement::T_GetIdealFPS(pm, pml);
+
 	pml->frametime = (float)pml->msec / 1000.f;
 	pm->cmd.serverTime += pml->msec;
 	pm->ps->commandTime += pml->msec;
 	pm->cmd.buttons = controller->buttons;
 
-	float deltaX = 0;
-	float deltaY = 0;
-	float deltaZ = 0;
+
+	fvec3 deltas;
 
 	switch (controller->turntype.get()->get_type()) {
 	case prediction_angle_enumerator::FIXED_TURN:
-		fvec3 deltas = dynamic_cast<prediction_viewangle_fixed_turn*>(controller->turntype.get())->get_deltas(pm, pml, controller);
-		deltaX = deltas.x;
-		deltaY = deltas.y;
-		deltaZ = deltas.z;
+		deltas = dynamic_cast<prediction_viewangle_fixed_turn*>(controller->turntype.get())->get_deltas(pm, pml);
 		break;
+	case prediction_angle_enumerator::STRAFEBOT:
+		deltas = dynamic_cast<prediction_viewangle_strafebot*>(controller->turntype.get())->get_deltas(pm, pml);
+		break;
+
 	}
 
-	pm->ps->viewangles[PITCH] += deltaX;
-	pm->ps->viewangles[YAW] += deltaY;
-	pm->ps->viewangles[ROLL] += deltaZ;
+	pm->ps->viewangles[PITCH] += deltas.x;
+	pm->ps->viewangles[YAW] += deltas.y;
+	pm->ps->viewangles[ROLL] += deltas.z;
 
-	pm->cmd.angles[PITCH] += ANGLE2SHORT(deltaX);
-	pm->cmd.angles[YAW] += ANGLE2SHORT(deltaY);
-	pm->cmd.angles[ROLL] += ANGLE2SHORT(deltaZ);
+	pm->cmd.angles[PITCH] += ANGLE2SHORT(deltas.x);
+	pm->cmd.angles[YAW] += ANGLE2SHORT(deltas.y);
+	pm->cmd.angles[ROLL] += ANGLE2SHORT(deltas.z);
 
 	PM_AdjustAimSpreadScale_(pm, pml);
-	//_PM_UpdateViewAngles(ps, pml->msec, &pm->cmd, pm->handler);
+	_PM_UpdateViewAngles(ps, pml->msec, &pm->cmd, pm->handler);
 
 	AngleVectors(pm->ps->viewangles, pml->forward, pml->right, pml->up); //set viewangles
 
@@ -189,8 +193,16 @@ simulation_results PmoveSingleSimulation(pmove_t* pm, pml_t* pml, prediction_con
 		PM_OverBounce(pm, pml);
 		Sys_SnapVector(pm->ps->velocity); //Sys_SnapVector | not called in singleplayer
 	}
+	
+	if (pm->cmd.forwardmove > 0)
+		pm->cmd.forwardmove = 127;
+	else if (pm->cmd.forwardmove < 0)
+		pm->cmd.forwardmove = -127;
 
-	memcpy(&pm->oldcmd, &pm->cmd, sizeof(pm->oldcmd));
+	if (pm->cmd.rightmove > 0)
+		pm->cmd.rightmove = 127;
+	else if (pm->cmd.rightmove < 0)
+		pm->cmd.rightmove = -127;
 
 	results.cmd_angles = pm->cmd.angles;
 	results.weapon = pm->cmd.weapon;
@@ -200,6 +212,13 @@ simulation_results PmoveSingleSimulation(pmove_t* pm, pml_t* pml, prediction_con
 	results.velocity = pm->ps->velocity;
 	results.mins = pm->mins;
 	results.maxs = pm->maxs;
+	results.buttons = pm->cmd.buttons;
+	results.forwardmove = pm->cmd.forwardmove;
+	results.rightmove = pm->cmd.rightmove;
+	results.FPS = 1000 / pml->msec;
+	memcpy(&pm->oldcmd, &pm->cmd, sizeof(pm->oldcmd));
+	pm->cmd.buttons = 0;
+
 
 	return std::move(results);
 }

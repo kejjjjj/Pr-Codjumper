@@ -15,6 +15,7 @@ public:
 	bool UI_ShouldRender() const noexcept { return is_loaded ? prediction->UI_ShouldRender() : rendering; }
 	void UI_Render();
 	void Hud_Render();
+	void Hud_EngineRender();
 	bool ProjectExists() const noexcept(true) { return is_loaded; }
 
 	auto get_playback() { return prediction->convert_to_playback(); }
@@ -30,9 +31,8 @@ private:
 	void close() noexcept;
 	void open() noexcept;
 
-
 	std::list<std::string> projects;
-
+	std::string mapname;
 	std::unique_ptr<Prediction> prediction;
 
 	Prediction_Init(const Prediction_Init&) = delete;

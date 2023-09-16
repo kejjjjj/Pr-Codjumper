@@ -20,7 +20,7 @@ std::string fs::get_extension(const std::string& file)
 	size_t const extensionPos = file.find_last_of(".");
 
 	if (extensionPos == std::string::npos)
-		return "No extension";
+		return "";
 
 	return file.substr(extensionPos);
 }
@@ -31,6 +31,15 @@ std::string fs::previous_directory(std::string& directory)
 		return directory;
 
 	return directory.substr(0, pos);
+}
+std::string fs::get_file_name(const std::string& fullpath)
+{
+	size_t pos = fullpath.find_last_of('\\');
+
+	if (pos < 1 || pos == std::string::npos)
+		return fullpath;
+
+	return fullpath.substr(pos + 1);
 }
 bool fs::io_open(std::ifstream& fp, const std::string& path, const fs::fileopen type)
 {
@@ -93,4 +102,35 @@ bool fs::valid_file_name(const std::string& name)
 
 	}
 	return true;
+}
+std::string fs::get_last_error()
+{
+	const DWORD errorMessageID = ::GetLastError();
+	char* messageBuffer = nullptr;
+
+	size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (char*)&messageBuffer, 0, NULL);
+
+	//Com_PrintError(CON_CHANNEL_CONSOLEONLY, "IO_WriteData failed with: %s\n", messageBuffer);
+
+	std::string output = std::string(messageBuffer, size);
+
+	LocalFree(messageBuffer);
+	return output;
+}
+char fs::get(std::fstream& fp)
+{
+	file.current_character = fp.get();
+	file.current_column++;
+	if (file.current_character == '\n') {
+		file.lines_read++;
+		file.current_column = 0;
+	}
+
+	return file.current_character;
+}
+void fs::reset()
+{
+	memset(&file, 0, sizeof(file_s));
+
 }

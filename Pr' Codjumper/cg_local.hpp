@@ -1498,6 +1498,43 @@ struct pmove_t
 };
 inline pmove_t* pm_glob;
 inline pml_t* pml_glob;
+namespace cmdEnums
+{
+	enum Buttons
+	{
+		fire = 1,
+		melee = 4,
+		activate = 8,
+		reload = 16,
+		lean_left = 64,
+		lean_right = 128,
+		prone = 256,
+		crouch = 512,
+		jump = 1024,
+		ads_toggle_on = 2048,
+		crouch_hold = 4608,
+		prone_hold = 4352,
+		steady_aim = 8192,
+		sprint = 8194,
+		frag = 16384,
+		special_grenade = 32768,
+		ads_toggle_off = 524288,
+		ads_hold = 526336,
+		no_input = 1048576 //such as menu open or chat is open
+	};
+
+	enum Move : char
+	{
+		noInput = 0,
+		forward = 127,
+		back = -127
+	};
+	enum Strafe : char
+	{
+		left = -127,
+		right = 127
+	};
+};
 enum MapType
 {
 	MAPTYPE_NONE = 0x0,

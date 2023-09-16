@@ -78,10 +78,12 @@ playback_cmd* Playback::CurrentCmd() const {
 	if (!playback)
 		return 0;
 
-	if (it == recorder_sequence.end())
+	if (it == recorder_sequence.end() || it == recorder_sequence.begin())
 		return nullptr;
 
-	return &(*it);
+	auto copy = it;
+
+	return &(*--copy);
 }
 void Playback::DrawPlayback()
 {

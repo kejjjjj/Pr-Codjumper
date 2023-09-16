@@ -29,16 +29,40 @@ void Prediction::UI_ToggleRenderState()
 	ui_open();
 
 }
+void Prediction::refresh_each_segment() noexcept
+{
+	auto it = predicted.begin();
+	auto it2 = it;
+	std::advance(it2, 1);
+
+	predicted.front()->refresh_prediction(0);
+
+	while (it2 != predicted.end()) {
+
+		(*it2)->refresh_prediction(&(*it)->state);
+
+		++it;
+		++it2;
+	}
+
+	last_edit_time = Sys_MilliSeconds();
+
+}
 void Prediction::UI_Render()
 {
 	if (!ui_rendering)
 		return;
 
-	ImGui::Begin("Prediction Tool", 0, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Begin("Prediction Tool", &ui_rendering, ImGuiWindowFlags_AlwaysAutoResize);
 	
+	UI_SegmentEditor();
+	if (current_segment->UI_FrameEditor())
+		refresh_each_segment();
+	if (current_segment->UI_OtherControls())
+		refresh_each_segment();
+	if (current_segment->UI_Buttons())
+		refresh_each_segment();
 
-	UI_FrameEditor();
-	UI_OtherControls();
 
 	if (!ui_rendering || ImGui::IsKeyPressed(VK_ESCAPE))
 		ui_close();
@@ -46,120 +70,59 @@ void Prediction::UI_Render()
 	ImGui::End();
 
 }
+
 void Prediction::UI_SegmentEditor()
 {
+	size_t num_segments = predicted.size()-1ull;
+	static DWORD ms = 0;
 
-}
-void Prediction::UI_FrameEditor()
-{
-	static int add_or_remove_frames_count = 100;
-
-	ImGui::PushItemWidth(130);
-	ImGui::InputInt("Count", &add_or_remove_frames_count, 1, 100);
-
-	ImGui::SameLine();
-	if (ImGui::Button("Add##01"))
-		current_segment->add_frames(add_or_remove_frames_count);
-	ImGui::SameLine();
-	if (ImGui::Button("Remove##01"))
-		current_segment->remove_frames(add_or_remove_frames_count);
-
-	ImGui::NewLine();
-	ImGui::Separator();
-
-}
-void Prediction::UI_OtherControls()
-{
-	const auto controls = current_segment->get_controls();
-
-	ImGui::BeginGroup();
-
-	constexpr const char* viewangle_options[] = { "Fixed turn" };
-
-	ImGui::PushItemWidth(150);
-	if (ImGui::Combo("Angles", &(int&)controls->turntype_enum, viewangle_options, IM_ARRAYSIZE(viewangle_options))) {
-
-		if (controls->turntype)
-			controls->turntype.reset();
-
-		switch (controls->turntype_enum) {
-		case prediction_angle_enumerator::FIXED_TURN:
-			controls->turntype = std::unique_ptr<prediction_viewangle_fixed_turn>(new prediction_viewangle_fixed_turn());
-			break;
-
-		}
-		refresh_each_segment();
+	ImGui::PushItemWidth(350);
+	if (ImGui::SliderInt_22("Segment", &current_segment_index, 0, num_segments)) {
+		current_segment = predicted[current_segment_index].get();
 	}
-	ImGui::NewLine();
-	UI_AngleControls_Fixed();
 
-	ImGui::EndGroup();
+	ImGui::SameLine();
 
-	UI_ControlsDPAD();
+	ImGui::Button("<##01", ImVec2(30, 0));
+	if (ImGui::IsItemActive()) {
+		if (current_segment_index > 0 && ms + 100 < Sys_MilliSeconds()) {
+			current_segment_index--;
+			ms = Sys_MilliSeconds();
+			current_segment = predicted[current_segment_index].get();
 
-	ImGui::NewLine();
-
-}
-void Prediction::UI_AngleControls_Fixed()
-{
-	const auto controls = current_segment->get_controls();
-
-	if (controls->turntype_enum != prediction_angle_enumerator::FIXED_TURN)
-		return;
-
-	auto fixed = dynamic_cast<prediction_viewangle_fixed_turn*>(controls->turntype.get());
-
-	ImGui::PushItemWidth(150);
-	if (ImGui::InputFloat("Right##01", &fixed->right, 0.f, 0.f, "%.3f"))
-		refresh_each_segment();
-
-
-	ImGui::PushItemWidth(150);
-	if (ImGui::InputFloat("Up##01", &fixed->up, 0.f, 0.f, "%.3f"))
-		refresh_each_segment();
-
-}
-void Prediction::UI_ControlsDPAD()
-{
-	auto& fwd = current_segment->get_controls()->forwardmove;
-	auto& rmove = current_segment->get_controls()->rightmove;
-
-	const auto constructkey = [this](char& dir, char value, const char* name) -> void {
-
-		if (dir == value)
-			ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(0.f, 0.f, 0.f, 0.7f);
-
-		if (ImGui::Button(name, ImVec2(40, 40))) {
-
-			if (dir == value)
-				dir = NULL;
-			else
-				dir = value;
-
-			refresh_each_segment();
 		}
-
-		ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(30.f / 255, 30.f / 255, 41.f / 255, 1.f);
-	};
-
+	}
 	ImGui::SameLine();
-	ImGui::Text("\t  ");
+	ImGui::Button(">##01", ImVec2(30, 0));
+	if (ImGui::IsItemActive()) {
+		if (current_segment_index + 1ull < predicted.size() && ms + 100 < Sys_MilliSeconds()) {
+			current_segment_index++;
+			ms = Sys_MilliSeconds();
+			current_segment = predicted[current_segment_index].get();
+
+		}
+	}
+	if (ImGui::Button("Add")) {
+		add_segment();
+	}
 	ImGui::SameLine();
 
-	ImGui::BeginGroup();
-	ImGui::Text("\t  ");
+	if (ImGui::Button("Insert")) {
+		insert_segment();
+	}
 	ImGui::SameLine();
-	ImGui::Dummy(ImVec2(0.2f, 0));
-	ImGui::SameLine();
-	constructkey(fwd, 127, "W##01");
 
-	constructkey(rmove, -127, "A##01");
+	if(current_segment_index == 0)
+		ImGui::BeginDisabled();
 
-	ImGui::SameLine();
-	constructkey(fwd, -127, "S##01");
 
-	ImGui::SameLine();
-	constructkey(rmove, 127, "D##01");
+	if (ImGui::Button("Remove Selected")) {
+		delete_segment();
+	}
 
-	ImGui::EndGroup();
+	if (current_segment_index == 0)
+		ImGui::EndDisabled();
+
+	ImGui::NewLine();
+
 }

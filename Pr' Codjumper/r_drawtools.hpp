@@ -34,3 +34,34 @@ std::optional<ivec2> WorldToScreen(const fvec3& location);
 
 void R_DrawTriangle(vec3_t pointA, vec3_t pointB, vec3_t pointC, vec4_t col);
 void R_DrawLine(vec3_t pointA, vec3_t pointB, vec4_t col);
+
+struct box_s
+{
+	box_s(const fvec3& origin, const fvec3& mins, const fvec3& maxs);
+
+	void R_DrawConstructedBox(vec4_t col) const;
+	void R_DrawConstructedBoxEdges(vec4_t col) const;
+
+private:
+
+	std::optional<ivec2> lowA;
+	std::optional<ivec2> lowB;
+	std::optional<ivec2> lowC;
+	std::optional<ivec2> lowD;
+
+	std::optional<ivec2> highA;
+	std::optional<ivec2> highB;
+	std::optional<ivec2> highC;
+	std::optional<ivec2> highD;
+
+	bool lowA_valid;
+	bool lowB_valid;
+	bool lowC_valid;
+	bool lowD_valid;
+
+	bool highA_valid;
+	bool highB_valid;
+	bool highC_valid;
+	bool highD_valid;
+
+};
