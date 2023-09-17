@@ -151,11 +151,11 @@ std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml)
 	WeaponDef* weapon = BG_WeaponNames[pm->ps->weapon];
 
 	if (pm->ps->groundEntityNum == 1022) {
-		g_speed = pm->ps->speed / (weapon->moveSpeedScale * (pml->groundTrace.normal[2])) / 1.02150f;
+		g_speed = pm->ps->speed / (weapon->moveSpeedScale * (pml->groundTrace.normal[2])) / 1.12150f;
 
 
 		if ((pm->cmd.buttons & 8194) != 0){
-			g_speed = (pm->ps->speed / (weapon->moveSpeedScale * (pml->groundTrace.normal[2])) * Dvar_FindMalleableVar("player_sprintSpeedScale")->current.value) / 1.26106f;
+			g_speed = (pm->ps->speed / (weapon->moveSpeedScale * (pml->groundTrace.normal[2])) * Dvar_FindMalleableVar("player_sprintSpeedScale")->current.value) / 1.30506f;
 		}
 
 	}

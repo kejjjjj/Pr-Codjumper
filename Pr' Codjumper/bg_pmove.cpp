@@ -16,8 +16,8 @@ void PM_AirMove(pmove_t* pm, pml_t* pml)
 	memcpy(pm_glob, pm, sizeof(pmove_t));
 	memcpy(pml_glob, pml, sizeof(pml_t));
 
-	T::Movement::T_Strafebot(pm, pml);
 	T::Movement::T_AutoFPS(pm, pml);
+	T::Movement::T_Strafebot(pm, pml);
 
 	return detour_func.cast_call<void(__cdecl*)(pmove_t* pm, pml_t* pml)>(pm, pml);
 }

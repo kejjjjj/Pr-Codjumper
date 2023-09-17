@@ -68,10 +68,15 @@ void __cdecl Renderer::CG_DrawActive()
 
 
 	if (find_evar<bool>("AutoFPS")->get()) {
-		int fps = T::Movement::T_GetIdealFPS(pm_glob, pml_glob);
+		int fps = T::Movement::T_GetIdealFPS(pm_glob);
 		sprintf_s(buffer, "%i", fps);
 		R_AddCmdDrawTextWithEffects(buffer, "fonts/objectivefont", cgs->refdef.width / 2.f - 15.f, cgs->refdef.height / 2.f + 30.f, 1.3f, 1.3f, 0.f, vec4_t{ 1,1,0,1 }, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
 	}
+
+	auto results = T::Movement::GetDistanceToFPSZone(pm_glob, 333);
+	sprintf_s(buffer, "%.2f, %.2f, (%.2f)", results.begin, results.end, results.length);
+	R_AddCmdDrawTextWithEffects(buffer, "fonts/smallDevFont", cgs->refdef.width / 2.f - 15.f, cgs->refdef.height / 2.f + 100.f, 2.3f, 2.3f, 0.f, vec4_t{ 1,1,0,1 }, 3, glowCol, nullptr, nullptr, 0, 0, 0, 0);
+
 
 	prediction.Hud_EngineRender();
 	playback.DrawPlayback();

@@ -94,7 +94,7 @@ simulation_results PmoveSingleSimulation(pmove_t* pm, pml_t* pml, prediction_con
 	pml->msec = 1000 / ((controller->FPS == 0) ? 1 : controller->FPS); //simulate fps
 
 	if (controller->autofps)
-		pml->msec = 1000 / T::Movement::T_GetIdealFPS(pm, pml);
+		pml->msec = 1000 / T::Movement::T_GetIdealFPS(pm);
 
 	pml->frametime = (float)pml->msec / 1000.f;
 	pm->cmd.serverTime += pml->msec;

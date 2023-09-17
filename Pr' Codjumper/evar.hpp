@@ -15,7 +15,10 @@ class Evar : public EvarBase {
 public:
     Evar(const std::string& name) : name(name), data(nullptr) {}
 
-    Evar(const std::string& name, const T& value) : name(name), data(new T(value)) {}
+    Evar(const std::string& name, const T& value) : name(name), data(new T(value)) {
+        *(T*)get_raw() = value;
+
+    }
 
     Evar(const std::string& name, const T* array, size_t size) : name(name), data(new T[size]) {
         isArray = true;

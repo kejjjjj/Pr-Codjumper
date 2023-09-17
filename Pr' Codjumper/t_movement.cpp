@@ -1,5 +1,6 @@
 #include "pch.hpp"
 
+
 bool T::Movement::StrafingRight(pmove_t* pm)
 {
 	return atan2(-pm->cmd.rightmove, pm->cmd.forwardmove) < 0;
@@ -18,6 +19,7 @@ void T::Movement::T_Strafebot(pmove_t* pm, pml_t* pml)
 
 	std::optional<float> yaw;
 
+	T_AutoPara(pm, pml);
 
 	if ((yaw = CG_GetOptYawDelta(pm, pml)) == std::nullopt) {
 		PM_DisallowMouse(false);
@@ -25,6 +27,8 @@ void T::Movement::T_Strafebot(pmove_t* pm, pml_t* pml)
 	}
 
 	PM_DisallowMouse(true);
+
+
 
 	//pm->cmd.angles[YAW] += ANGLE2SHORT(yaw.value());
 	//pm->ps->viewangles[YAW] += yaw.value();
@@ -40,6 +44,51 @@ void T::Movement::T_Strafebot(pmove_t* pm, pml_t* pml)
 	//fvec3(pm->ps->viewangles).toup().assign_to(pml->up);
 
 	
+}
+void T::Movement::T_AutoPara(pmove_t* pm, pml_t* pml)
+{
+	static decltype(auto) auto_para = find_evar<bool>("Auto Para");
+	static char _rightmove = 0;
+
+	if (auto_para->get() == false || pm->ps->speed != 190) {
+		_rightmove = 0;
+		return;
+	}
+	const float speed = fvec2(pm->ps->velocity[0], pm->ps->velocity[1]).mag();
+
+	if ((speed <= 285 || speed >= 625) || pm->cmd.forwardmove == NULL || pm->ps->groundEntityNum != 1023) {
+		_rightmove = 0;
+		return;
+	}
+
+	if (!_rightmove)
+		_rightmove = pm->cmd.rightmove;
+
+	if(_rightmove)
+		pm->cmd.rightmove = _rightmove;
+
+	static std::vector<fps_zone> zones = GetFPSZones(pm->ps->speed);
+
+	if (zones.empty())
+		return FatalError("T_AutoPara(): no fps zones");
+
+	const int32_t FPS = T_GetIdealFPS(pm);
+
+
+	//pm->cmd.rightmove = 0;
+
+	auto results = GetDistanceToFPSZone(pm, 333);
+
+	float distance2inneredge = _rightmove == 127 ? results.end : results.begin;
+
+	if (distance2inneredge < 0.1f || distance2inneredge >= results.length + 10) {
+		_rightmove *= -1;
+	}
+	pm->oldcmd.rightmove = _rightmove;
+	pm->cmd.rightmove = _rightmove;
+
+	Dvar_FindMalleableVar("com_maxfps")->current.integer = 333;
+
 }
 void T::Movement::T_AutoFPS(pmove_t* pm, pml_t* pml)
 {
@@ -58,24 +107,11 @@ void T::Movement::T_AutoFPS(pmove_t* pm, pml_t* pml)
 		return;
 	}
 
-	com_maxfps->current.integer = T_GetIdealFPS(pm, pml);
+	com_maxfps->current.integer = T_GetIdealFPS(pm);
 
 
 }
 
-enum fps_enum
-{
-	F333,
-	F250,
-	F200,
-	F125
-};
-struct fps_zone
-{
-	float start;
-	float end;
-	int FPS;
-};
 void swapForAxis(fps_zone& zone)
 {
 	if (AngularDistance(zone.end, 0) > 50 && AngularDistance(zone.start, 0) > 45) {
@@ -97,9 +133,11 @@ void swapForAxis(fps_zone& zone)
 
 	return;
 }
-void get_zones(int g_speed, std::vector<fps_zone>& zone)
+std::vector<fps_zone> T::Movement::GetFPSZones(int g_speed)
 {
 	std::vector<int> fps;
+	std::vector<fps_zone> zone;
+
 	zone.clear();
 
 	//note: g_speed will mess these hardcoded values up!
@@ -129,13 +167,26 @@ void get_zones(int g_speed, std::vector<fps_zone>& zone)
 
 	//}
 
+	fps_zone copy;
+
 	zone.resize(fps.size());
 	zone[0].start = (std::round(g_speed / (1000 / fps[0])));
 	zone[0].end = -zone[0].start;
 	zone[0].FPS = fps[0];
 
+	if (g_speed == 190) {
+		zone[0].start -= 1;
+		zone[0].end = -zone[0].start;
+	}
+
 	zone[0].start = int(zone[0].start);
 	zone[0].end = int(zone[0].end);
+
+	copy = zone[0];
+	swapForAxis(copy);
+
+	zone[0].length = (zone[0].start > 45 ? 90.f - zone[0].start : zone[0].start) * 2;
+
 
 	for (int i = 1; i < fps.size(); i++) {
 
@@ -145,12 +196,14 @@ void get_zones(int g_speed, std::vector<fps_zone>& zone)
 		zone[i].start = int(zone[i].start);
 		zone[i].end = int(zone[i].end);
 		zone[i].FPS = fps[i];
+		zone[i].length = (zone[i].start > 45 ? 90.f - zone[i].start : zone[i].start) * 2;
+
 
 	}
 
-	return;
+	return zone;
 }
-int32_t T::Movement::T_GetIdealFPS(pmove_t* pm, pml_t* pml)
+int32_t T::Movement::T_GetIdealFPS(pmove_t* pm)
 {
 	const auto in_range = [&pm](float yaw, float min, float max, bool info) -> bool {
 		const float screen_center = float(cgs->refdef.width / 2);
@@ -164,12 +217,30 @@ int32_t T::Movement::T_GetIdealFPS(pmove_t* pm, pml_t* pml)
 		return results.x1 <= screen_center && results.x2 >= screen_center;
 	};
 	static int g_speed = 0;
-	static std::vector<fps_zone> zones;
+	static std::vector<fps_zone> zones = GetFPSZones(pm->ps->speed);
 	fps_zone copy;
 	if (g_speed != pm->ps->speed) {
-		get_zones(pm->ps->speed, zones);
+		zones = GetFPSZones(pm->ps->speed);
 		g_speed = pm->ps->speed;
 	}
+
+	copy = zones[0];
+
+
+	if (pm->cmd.rightmove == 127) {
+		copy.start *= -1;
+		copy.end *= -1;
+
+	}
+
+	if (!in_range(pm->ps->viewangles[YAW], copy.start, copy.end, 0))
+		return 333;
+
+	swapForAxis(copy);
+
+	if (in_range(pm->ps->viewangles[YAW], copy.start, copy.end, 0))
+		return 333;
+
 
 	for (int zone = 1; zone < zones.size(); zone++) {
 
@@ -194,6 +265,60 @@ int32_t T::Movement::T_GetIdealFPS(pmove_t* pm, pml_t* pml)
 	
 
 	return 333;
+
+}
+zone_distance T::Movement::GetDistanceToFPSZone(pmove_t* pm, int wishFPS)
+{
+	static int g_speed = 0;
+	static std::vector<fps_zone> zones = GetFPSZones(pm->ps->speed);
+	if (g_speed != pm->ps->speed) {
+		zones = GetFPSZones(pm->ps->speed);
+		g_speed = pm->ps->speed;
+	}
+
+	fps_zone* zone = 0;
+
+	std::vector<fps_zone>::iterator it = (std::find_if(zones.begin(), zones.end(), [wishFPS](const fps_zone& z) {
+		return (wishFPS == z.FPS); }));
+
+	if(it == zones.end())
+		FatalError("GetFPSZoneDistances didn't find matching fps");
+
+	zone = &*it;
+
+	char rightmove = pm->cmd.rightmove;
+
+	if (rightmove >= 0)
+		rightmove *= -1;
+
+	const float yaw = AngleNormalize90(pm->ps->viewangles[YAW] + RAD2DEG(atan2(-(int)rightmove, (int)pm->cmd.forwardmove))); //yaw + accel angle
+	const float real_yaw = AngleNormalize90(pm->ps->viewangles[YAW]);;
+	zone_distance results;
+
+	results.begin = AngleNormalize90((AngleDelta(yaw, zone->end)));
+	results.end = AngleNormalize90((AngleDelta(yaw, zone->start)));
+
+	if (real_yaw >= 0) {
+		results.begin *= -1;
+	}
+	else {
+		results.begin = 90.f - results.begin;
+		results.end += 90.f;
+
+		if (results.begin >= 90)
+			results.begin -= 180;
+		if (results.end >= 90)
+			results.end -= 180;
+	}
+
+	if (results.begin < 0)
+		results.begin += 90;
+	if (results.end < 0)
+		results.end += 90;
+
+	results.length = zone->length;
+		
+	return results;
 
 }
 
